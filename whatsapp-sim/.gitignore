@@ -1,0 +1,15 @@
+# 1. Crie o arquivo .gitignore com a linha /node_modules dentro dele
+# (pode ser feito manualmente ou com o comando abaixo)
+echo "/node_modules" > .gitignore
+
+# 2. Limpe o cache do Git
+git rm -r --cached .
+
+# 3. Adicione os arquivos corretos
+git add .
+
+# 4. Crie o commit da correção
+git commit -m "Fix: Stop tracking node_modules"
+
+# 5. Envie para o repositório remoto
+git push origin master

@@ -1,0 +1,2555 @@
+diff --git a/.env b/.env
+deleted file mode 100644
+index 53e04f64b3eadb9f43a75ce52133d21178539fe2..0000000000000000000000000000000000000000
+--- a/.env
++++ /dev/null
+@@ -1,4 +0,0 @@
+-REACT_APP_SUPABASE_URL=https://gehojmjcsctlwtxnuuwe.supabase.co
+-REACT_APP_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdlaG9qbWpjc2N0bHd0eG51dXdlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc1OTMxNzgsImV4cCI6MjA3MzE2OTE3OH0.bjKcff9t6dhsuXIYsPRuGLkj84-ManU3Gi5Jku3RK2c
+-
+-
+diff --git a/.env.example b/.env.example
+new file mode 100644
+index 0000000000000000000000000000000000000000..ed0ce98eab6e7a1e95d72443363f2ac36b84050b
+--- /dev/null
++++ b/.env.example
+@@ -0,0 +1,12 @@
++REACT_APP_SUPABASE_URL=https://your-project.supabase.co
++REACT_APP_SUPABASE_ANON_KEY=your-anon-key
++REACT_APP_ENCRYPTION_SECRET=change_me_32_chars_minimum
++
++REACT_APP_EMISSOR_NACIONAL_BASE_URL=
++REACT_APP_EMISSOR_NACIONAL_API_KEY=
++REACT_APP_EMISSOR_NACIONAL_CERT_ALIAS=
++REACT_APP_EMISSOR_NACIONAL_ENV=homologacao
++
++REACT_APP_ESOCIAL_BASE_URL=
++REACT_APP_ESOCIAL_API_KEY=
++REACT_APP_ESOCIAL_ENV=homologacao
+diff --git a/.gitignore b/.gitignore
+index 81b979c299885d7c55ea6fbb3f1e4d4fd753b010..969bcbfda6446f3111ec410c0dae884ec9f0d431 100644
+GIT binary patch
+delta 9
+Rcmeyw^qpzKp^1C90st8z1w#M;
+
+delta 9
+Rcmey)^oeQ0p^3*g000>~1xNq@
+
+diff --git a/README.md b/README.md
+index 4dafc7d07cfb8b08778c05ab7b52c3c3c81baee2..28e329c98525ccdd1fca3c918323a281dc1a537b 100644
+--- a/README.md
++++ b/README.md
+@@ -1,223 +1,121 @@
+-Claro! Abaixo está o **arquivo `README.md` completo** para seu projeto **Rebelo App**, pronto para ser colocado na raiz do repositório. Ele inclui:
++# GuiasMEI
+ 
+-✅ Descrição do projeto  
+-✅ Tecnologias utilizadas  
+-✅ Estrutura de pastas  
+-✅ Instruções de instalação e configuração local  
+-✅ Como executar (frontend, backend, WhatsApp sim)  
+-✅ Variáveis de ambiente  
+-✅ Fluxo do usuário  
+-✅ Licença
++Plataforma web que automatiza a emissão de notas fiscais de serviço (NFS-e) e guias de GPS (INSS) para MEIs, autônomos e escritórios parceiros. O projeto roda com React no frontend, Supabase como backend-as-a-service e integrações dedicadas para o Emissor Nacional e para o eSocial.
+ 
+----
++## ✨ Funcionalidades
+ 
+-# 📄 **README.md — Rebelo App**
++- Cadastro de usuários MEI e Autônomo com criptografia de documentos sensíveis.
++- Login unificado por e-mail.
++- Dashboards para usuários finais, parceiros e administradores.
++- Pagamentos de adesão com Stripe via Edge Functions no Supabase.
++- Emissão de NFS-e e GPS com tentativa de integração direta aos serviços oficiais e fallback automático para modo de testes.
++- Gestão de certificados digitais e vínculo de clientes a parceiros (modelagem pronta nas migrações).
++- Webhook e simulador de WhatsApp para acompanhar o fluxo conversacional.
+ 
+-> **Plataforma Web + WhatsApp para Gestão Fiscal Automatizada de MEIs e Autônomos**
+-
+-O **Rebelo App** é uma plataforma que automatiza a gestão fiscal de Microempreendedores Individuais (MEIs) e autônomos, permitindo a emissão de notas fiscais de serviço (NFS-e) e guias de INSS (GPS) via atendimento guiado por IA no WhatsApp. O sistema opera com dois modelos de usuário: **usuário comum** e **parceiro** (contabilidades revendedoras).
+-
+----
+-
+-## 🚀 **Funcionalidades Principais**
+-
+-- ✅ Cadastro de MEI (com busca automática na Receita Federal) e Autônomo
+-- ✅ Onboarding guiado por IA via WhatsApp
+-- ✅ Pagamento de adesão via Stripe (R$120,00)
+-- ✅ Emissão simulada de Nota Fiscal de Serviço (NFS-e)
+-- ✅ Emissão simulada de Guia de Previdência Social (GPS)
+-- ✅ Dashboard do Usuário com histórico e status
+-- ✅ Dashboard do Parceiro (contabilidade) com gestão de clientes e comissões
+-- ✅ Dashboard Administrativo com relatórios e métricas
+-- ✅ Criptografia de dados sensíveis (CPF/CNPJ/PIS)
+-- ✅ Conformidade com LGPD e políticas de RLS no Supabase
+-
+----
+-
+-## 🛠️ **Tecnologias Utilizadas**
+-
+-| Camada        | Tecnologia                          |
+-|---------------|-------------------------------------|
+-| **Frontend**  | React, React Router, Axios          |
+-| **Backend**   | Supabase (Auth, Database, Edge Functions) |
+-| **WhatsApp**  | Simulador local com WhatsApp Web.js (WWebJS) + preparado para API Oficial |
+-| **Pagamentos**| Stripe (modo teste)                 |
+-| **APIs**      | Receita WS (via proxy), Emissor Nacional de NFS-e (simulado) |
+-| **Segurança** | Criptografia AES-GCM, RLS, LGPD     |
+-| **Deploy**    | Vercel (frontend), Supabase (backend) |
+-
+----
+-
+-## 📁 **Estrutura de Pastas**
++## 🗂 Estrutura principal
+ 
+ ```
+-rebelo-app/
+-├── .env                          # Variáveis de ambiente
+-├── public/                       # Assets públicos
++guiasMEI/
++├── public/
+ ├── src/
+-│   ├── assets/                   # Imagens, ícones
+-│   ├── components/               # Componentes reutilizáveis
+-│   │   ├── common/
+-│   │   └── ui/
+-│   ├── pages/                    # Telas da aplicação
+-│   │   ├── HomePage.jsx
+-│   │   ├── CadastroPage.jsx
+-│   │   ├── DashboardUser.jsx
+-│   │   ├── DashboardPartner.jsx
+-│   │   ├── AdminDashboard.jsx
+-│   │   ├── EmitirNotaPage.jsx
+-│   │   ├── EmitirGpsPage.jsx
+-│   │   ├── PaymentPage.jsx
+-│   │   └── PoliticaPrivacidade.jsx
+-│   ├── services/                 # Serviços de integração
+-│   │   ├── paymentService.js
+-│   │   └── whatsappService.js
++│   ├── assets/
++│   ├── pages/
++│   ├── services/
++│   │   └── integrations/
+ │   ├── supabase/
+-│   │   └── client.js             # Cliente Supabase
+-│   ├── utils/
+-│   │   ├── encryption.js         # Criptografia AES-GCM
+-│   │   └── validators.js         # Validação de CPF/CNPJ
+-│   ├── App.jsx
+-│   └── index.js
+-├── whatsapp-sim/                 # Simulador de WhatsApp (Node.js)
+-│   ├── server.js
+-│   └── public/
+-│       └── index.html
+-└── rebelo-app/supabase/
+-    └── functions/                # Edge Functions
+-        ├── fetch-cnpj/
+-        │   └── index.ts
+-        ├── create-checkout-session/
+-        │   └── index.ts
+-        ├── stripe-webhook/
+-        │   └── index.ts
+-        └── whatsapp-webhook/
+-            └── index.ts
++│   └── utils/
++├── supabase/
++│   └── migrations/
++└── whatsapp-sim/
+ ```
+ 
+----
++## ⚙️ Pré-requisitos
+ 
+-## ⚙️ **Configuração Local**
++- Node.js 18+
++- npm 9+
++- Supabase CLI (opcional, para rodar funções localmente)
+ 
+-### 1. Clone o repositório
++## 🚀 Como executar
+ 
+ ```bash
+ git clone https://github.com/gesielr/guiasMEI.git
+-cd rebelo-app
+-```
+-
+-### 2. Configure o `.env` na raiz
+-
+-```env
+-# Supabase
+-REACT_APP_SUPABASE_URL=https://seu-projeto.supabase.co
+-REACT_APP_SUPABASE_ANON_KEY=sua-chave-anon-aqui
+-
+-# Criptografia
+-REACT_APP_ENCRYPTION_SECRET=uma_chave_secreta_muito_forte_aqui_32bytes!
+-
+-# WhatsApp (para produção)
+-REACT_APP_WHATSAPP_PHONE_NUMBER_ID=123456789012345
+-REACT_APP_WHATSAPP_ACCESS_TOKEN=EAAlZBw1xO...
+-
+-# Stripe (para produção)
+-REACT_APP_STRIPE_PUBLIC_KEY=pk_test_... # Usada principalmente nas Edge Functions do Supabase
++cd guiasMEI
++npm install
++npm start
+ ```
+ 
+-> 💡 Substitua pelos valores do seu projeto Supabase: https://supabase.com/dashboard
++A aplicação sobe em `http://localhost:3000`.
+ 
+-### 3. Instale as dependências do frontend
++### Credenciais de acesso
+ 
+-```bash
+-npm install
+-```
++Todos os fluxos de cadastro normalizam o e-mail (caixa baixa e sem espaços) antes de criar a conta. Utilize esse mesmo e-mail no formulário de login — telefones não são aceitos como identificador principal.
+ 
+-### 4. Configure o simulador de WhatsApp
++### Simulador de WhatsApp
+ 
+ ```bash
+ cd whatsapp-sim
+ npm install
++node server.js
+ ```
+ 
+-### 5. Configure as Edge Functions (Supabase CLI)
++### Supabase Edge Functions (opcional)
+ 
+ ```bash
+-cd rebelo-app # Altere para o diretório do frontend
+ supabase login
++supabase functions serve
+ ```
+ 
+----
+-
+-## ▶️ **Como Executar**
+-
+-### ✅ Frontend (React)
+-
+-```bash
+-cd rebelo-app
+-npm start
+-```
+-
+-> Acesse: `http://localhost:3000`
+-
+----
++## 🔐 Variáveis de ambiente
+ 
+-### ✅ Simulador de WhatsApp (WWebJS)
++Crie um arquivo `.env` na raiz (use `.env.example` como referência) e defina as variáveis abaixo:
+ 
+-```bash
+-cd whatsapp-sim
+-node server.js
++```env
++REACT_APP_SUPABASE_URL=...
++REACT_APP_SUPABASE_ANON_KEY=...
++REACT_APP_ENCRYPTION_SECRET=...
++
++# Integração Emissor Nacional (modo teste ou produção)
++REACT_APP_EMISSOR_NACIONAL_BASE_URL=https://sandbox.exemplo.com
++REACT_APP_EMISSOR_NACIONAL_API_KEY=chave-opcional
++REACT_APP_EMISSOR_NACIONAL_CERT_ALIAS=apelido-certificado-opcional
++REACT_APP_EMISSOR_NACIONAL_ENV=homologacao
++
++# Integração eSocial
++REACT_APP_ESOCIAL_BASE_URL=https://sandbox.exemplo.com
++REACT_APP_ESOCIAL_API_KEY=chave-opcional
++REACT_APP_ESOCIAL_ENV=homologacao
+ ```
+ 
+-> Acesse: `http://localhost:3001` → escaneie o QR Code com seu WhatsApp.
++Se as URLs oficiais não estiverem configuradas, o frontend gera emissões simuladas automaticamente e registra o erro para análise posterior.
+ 
+----
++## 🧪 Testes
+ 
+-### ✅ Supabase Edge Functions (Local)
++Para executar os testes unitários:
+ 
+ ```bash
+-cd rebelo-app
+-supabase functions serve fetch-cnpj
+-# Ou para servir todas:
+-supabase functions serve
++npm test -- --watchAll=false
+ ```
+ 
+-> Acesse: `http://localhost:54321/functions/v1/fetch-cnpj?cnpj=00000000000000`
+-
+----
+-
+-## 🔄 **Fluxo de Teste Local**
+-
+-1. Acesse `http://localhost:3000` → Cadastre-se como MEI ou Autônomo.
+-2. Após cadastro, é redirecionado para WhatsApp com seu `user_id`.
+-3. No WhatsApp, envie: `Olá! Sou novo usuário. Meu ID é: SEU_UUID`.
+-4. A IA responde com links de contrato e pagamento.
+-5. Clique no link de pagamento → pague com cartão de teste do Stripe (`4242...`).
+-6. Após pagamento, acesse o Dashboard → emita nota fiscal e GPS.
+-7. Teste também os dashboards de Parceiro e Admin (crie usuários manualmente no Supabase).
+-
+----
+-
+-## 🔐 **Segurança e LGPD**
++A suíte cobre os validadores de CPF/CNPJ e a verificação de configuração mínima das integrações fiscais.
+ 
+-- Todos os dados sensíveis (CPF, CNPJ, PIS) são criptografados com **AES-GCM** antes de salvar no banco.
+-- Políticas de **Row Level Security (RLS)** aplicadas em todas as tabelas.
+-- Consentimento explícito no cadastro + página de Política de Privacidade.
+-- Logs de acesso e auditoria via tabela `whatsapp_logs`.
++## 🗄 Banco de dados
+ 
+----
++As migrações do diretório `supabase/migrations` criam e protegem:
+ 
+-## 📤 **Próximos Passos (Produção)**
++- `profiles` (com campos de contato e status do certificado digital)
++- `nfse_emissions` e `gps_emissions` com `integration_mode` e `raw_response`
++- `partners`, `partner_clients`, `digital_certificates`, `esocial_tasks`
+ 
+-1. Substituir simulação de WhatsApp pela **API Oficial do WhatsApp Business Cloud**.
+-2. Integrar com **API real do Emissor Nacional de NFS-e** (requer certificado digital).
+-3. Implementar **web scraping ou API parceira para GPS real**.
+-4. Fazer deploy do frontend na **Vercel** e ativar HTTPS.
+-5. Configurar domínio personalizado e CI/CD.
++Execute-as com o Supabase CLI ou aplique o SQL diretamente no projeto.
+ 
+----
++## 🧭 Fluxo recomendado de testes manuais
+ 
+-## 📜 **Licença**
++1. Cadastre um MEI ou autônomo e confirme que o login funciona com o e-mail informado.
++2. Complete o onboarding e acesse o dashboard.
++3. Emita uma NFS-e e uma guia GPS. Configure as variáveis de integração para chamar os serviços ou deixe vazio para testar o fallback simulado.
++4. Confira os registros nas tabelas `nfse_emissions` e `gps_emissions` via Supabase Studio.
++5. Navegue até uma rota inexistente para visualizar a página de erro dedicada.
+ 
+-MIT License — Livre para uso, modificação e distribuição.
++## 📄 Licença
+ 
+----
++Projeto distribuído sob a licença MIT. Consulte o arquivo `LICENSE` (se aplicável) para mais detalhes.
+diff --git a/src/App.jsx b/src/App.jsx
+index fc9f16ef992a4900d87cf20687475ba1c1ee5aec..4aa765439a9ee1888c44fe5777afb66fb1472fa9 100644
+--- a/src/App.jsx
++++ b/src/App.jsx
+@@ -1,40 +1,44 @@
+ ﻿// src/App.jsx
+ import React from 'react';
+ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+ import HomePage from './pages/HomePage';
+ import CadastroPage from './pages/CadastroPage';
+ import CadastroPageMei from './pages/CadastroPageMei';
+ import CadastroPageGps from './pages/CadastroPageGps';
++import CadastroPartner from './pages/CadastroPartner';
+ import PaymentPage from './pages/PaymentPage';
+ import DashboardUser from './pages/DashboardUser';
+ import EmitirNotaPage from './pages/EmitirNotaPage';
+ import EmitirGpsPage from './pages/EmitirGpsPage';
+ import DashboardPartner from './pages/DashboardPartner';
+ import AdminDashboard from './pages/AdminDashboard';
+ import PoliticaPrivacidade from './pages/PoliticaPrivacidade';
+ import LoginPage from './pages/LoginPage';
++import ErrorPage from './pages/ErrorPage';
+ 
+ function App() {
+   return (
+     <Router>
+       <div className="App">
+         <Routes>
+           <Route path="/" element={<HomePage />} />
+           <Route path="/cadastro" element={<CadastroPage />} />
+           <Route path="/cadastro/mei" element={<CadastroPageMei />} />
+           <Route path="/cadastro/autonomo" element={<CadastroPageGps />} />
++          <Route path="/cadastro/parceiro" element={<CadastroPartner />} />
+           <Route path="/login" element={<LoginPage />} />
+           <Route path="/pagar" element={<PaymentPage />} />
+           <Route path="/dashboard" element={<DashboardUser />} />
+           <Route path="/emitir-nota" element={<EmitirNotaPage />} />
+           <Route path="/emitir-gps" element={<EmitirGpsPage />} />
+           <Route path="/dashboard-parceiro" element={<DashboardPartner />} />
+           <Route path="/admin" element={<AdminDashboard />} />
+           <Route path="/politica-privacidade" element={<PoliticaPrivacidade />} />
++          <Route path="*" element={<ErrorPage />} />
+         </Routes>
+       </div>
+     </Router>
+   );
+ }
+ 
+ export default App;
+diff --git a/src/pages/CadastroPage.jsx b/src/pages/CadastroPage.jsx
+index d298c725e641f7b2527a0f5fcb8566ff5584bc38..d07d34b5c0a1bc446fe0ce0518914a7cfe8224e4 100644
+--- a/src/pages/CadastroPage.jsx
++++ b/src/pages/CadastroPage.jsx
+@@ -20,50 +20,65 @@ const CadastroPage = () => {
+       textTransform: 'uppercase',
+       color: '#28a745', // verde
+       marginRight: '8px',
+     }}>
+       Sou MEI
+     </span>
+     <span style={styles.buttonSubtext}>
+       Cadastro para Microempreendedor Individual
+     </span>
+   </Link>
+ 
+   <Link to="/cadastro/autonomo" style={styles.selectionButton}>
+     <span style={{ ...styles.buttonIcon, marginRight: '12px' }}>👤</span>
+     <span style={{
+       ...styles.buttonText,
+       textTransform: 'uppercase',
+       color: '#28a745', // verde
+       marginRight: '8px',
+     }}>
+       Sou Autônomo
+     </span>
+     <span style={styles.buttonSubtext}>
+       Cadastro para contribuintes individuais
+     </span>
+   </Link>
++
++  <Link to="/cadastro/parceiro" style={styles.selectionButton}>
++    <span style={{ ...styles.buttonIcon, marginRight: '12px' }}>🤝</span>
++    <span style={{
++      ...styles.buttonText,
++      textTransform: 'uppercase',
++      color: '#28a745',
++      marginRight: '8px',
++    }}>
++      Sou Parceiro
++    </span>
++    <span style={styles.buttonSubtext}>
++      Cadastro para contadores e consultores
++    </span>
++  </Link>
+ </div>
+ 
+         <div style={styles.backLinkContainer}>
+             <Link to="/" style={styles.backLink}>
+                 <span style={styles.backIcon}>{"←"}</span>
+                 <span>Voltar para a Home</span>
+             </Link>
+         </div>
+       </div>
+     </div>
+   );
+ };
+ 
+ const styles = {
+     pageContainer: {
+         display: "flex",
+         minHeight: "100vh",
+         justifyContent: "center",
+         alignItems: "center",
+         background: "linear-gradient(135deg, #f1f5ff 0%, #f8fbff 100%)",
+         fontFamily: '"Inter", sans-serif',
+         padding: "24px",
+     },
+     selectionContainer: {
+         maxWidth: "500px",
+diff --git a/src/pages/CadastroPageGps.jsx b/src/pages/CadastroPageGps.jsx
+index 5d9ea91e5cd078a5c81241eeed12233219c7a414..57e804454b4243753552271ffbf321dae97e1cd8 100644
+--- a/src/pages/CadastroPageGps.jsx
++++ b/src/pages/CadastroPageGps.jsx
+@@ -12,94 +12,133 @@ const CadastroPage = () => {
+     email: "",
+     phone: "",
+     name: "",
+     password: "",
+   });
+ 
+   const safeFormData = {
+     document: formData.document || "",
+     pis: formData.pis || "",
+     email: formData.email || "",
+     phone: formData.phone || "",
+     name: formData.name || "",
+     password: formData.password || "",
+   };
+ 
+   const [loading, setLoading] = useState(false);
+   const [error, setError] = useState("");
+   const [consentGiven, setConsentGiven] = useState(false);
+   const navigate = useNavigate();
+ 
+   const handleDocumentChange = (event) => {
+     const doc = event.target.value.replace(/\D/g, "");
+     setFormData((prev) => ({ ...prev, document: doc }));
+   };
+ 
++  const sanitizePhone = (phone) => phone.replace(/\D/g, "");
++
+   const handleSubmit = async (event) => {
+     event.preventDefault();
+ 
+     if (!validateCPF(formData.document)) {
+       setError("CPF inválido.");
+       return;
+     }
+     if (!formData.email || !formData.phone || !formData.password) {
+       setError("Preencha todos os campos obrigatórios.");
+       return;
+     }
+     if (!consentGiven) {
+       setError("É necessário aceitar a Política de Privacidade e Termos de Uso.");
+       return;
+     }
+ 
+     setLoading(true);
+     try {
++      const normalizedEmail = formData.email.trim().toLowerCase();
++
+       const { data: authData, error: authError } = await supabase.auth.signUp({
++        email: normalizedEmail,
+         password: formData.password,
++        options: {
++          emailRedirectTo: `${window.location.origin}/dashboard`,
++          data: {
++            user_type: "autonomo",
++            phone: sanitizePhone(formData.phone),
++            full_name: formData.name,
++          },
++        },
+       });
+ 
+-      if (authError) throw authError;
++      if (authError) {
++        const normalizedMessage = (authError.message || "").toLowerCase();
++        if (
++          normalizedMessage.includes("duplicate key value") ||
++          normalizedMessage.includes("already registered") ||
++          authError.status === 409
++        ) {
++          setError(
++            "Este e-mail já está cadastrado. Faça login ou utilize a recuperação de senha."
++          );
++          setLoading(false);
++          return;
++        }
++        throw authError;
++      }
+       if (!authData?.user?.id) {
+         throw new Error("Não foi possível obter o usuário criado.");
+       }
+ 
+       const encryptedDocument = await encryptData(formData.document);
+       const encryptedPis = formData.pis ? await encryptData(formData.pis) : null;
+ 
+       const { error: profileError } = await supabase.from("profiles").upsert({
+         id: authData.user.id,
+         name: formData.name,
+         document: encryptedDocument,
+         pis: encryptedPis,
+         user_type: "autonomo",
++        contact_email: normalizedEmail,
++        phone: sanitizePhone(formData.phone),
+       }, { onConflict: "id", returning: "minimal" });
+ 
+       if (profileError) throw profileError;
+ 
+       setLoading(false);
+       navigate("/dashboard");
+     } catch (err) {
+-      setError("Erro no cadastro: " + (err.message || "Erro desconhecido"));
++      const normalizedMessage = (err?.message || "").toLowerCase();
++      if (
++        normalizedMessage.includes("duplicate key value") ||
++        normalizedMessage.includes("already registered")
++      ) {
++        setError(
++          "Este e-mail já está cadastrado. Faça login ou utilize a recuperação de senha."
++        );
++      } else {
++        setError("Erro no cadastro: " + (err.message || "Erro desconhecido"));
++      }
+       setLoading(false);
+     }
+   };
+ 
+   return (
+     <div style={styles.pageContainer}>
+       <div style={styles.formSection}>
+         <div style={styles.formContainer}>
+           <Link to="/" style={styles.backLink}>
+             <span style={styles.backIcon}>{"\u2190"}</span>
+             <span>Voltar para a Home</span>
+           </Link>
+ 
+           <div style={styles.logoWrapper}>
+             <div style={styles.logoBadge}>
+               <img src={logo} alt="Logo GuiaMei" style={styles.logo} />
+             </div>
+             <h2 style={styles.title}>Crie sua Conta</h2>
+             <p style={styles.subtitle}>Comece a simplificar sua vida fiscal hoje mesmo.</p>
+           </div>
+ 
+           {error && <div style={styles.error}>{error}</div>}
+ 
+           <form onSubmit={handleSubmit} style={styles.form}>
+             <div>
+diff --git a/src/pages/CadastroPageMei.jsx b/src/pages/CadastroPageMei.jsx
+index 2841ad78baaaaad650ad7f51af1cdf503829493c..66e375c6b1ee353fa49d940ba4255bfc2178a2e8 100644
+--- a/src/pages/CadastroPageMei.jsx
++++ b/src/pages/CadastroPageMei.jsx
+@@ -36,95 +36,136 @@ const CadastroPage = () => {
+     if (doc.length === 14) {
+       setLoading(true);
+       try {
+         const url = `${process.env.REACT_APP_SUPABASE_URL}/functions/v1/fetch-cnpj?cnpj=${doc}`;
+         const response = await fetch(url);
+         if (!response.ok) throw new Error("Erro ao buscar CNPJ.");
+ 
+         const data = await response.json();
+         if (data && (data.nome || data.fantasia)) {
+           setFormData((prev) => ({
+             ...prev,
+             business_name: data.fantasia || data.nome || "",
+             name: data.nome || "",
+           }));
+         } else {
+           setError("CNPJ não encontrado ou inválido.");
+         }
+       } catch (_err) {
+         setError("Erro ao buscar CNPJ.");
+       } finally {
+         setLoading(false);
+       }
+     }
+   };
+ 
++  const sanitizePhone = (phone) => phone.replace(/\D/g, "");
++
+   const handleSubmit = async (event) => {
+     event.preventDefault();
+     setError("");
+ 
+     if (!validateCNPJ(formData.document)) {
+       setError("CNPJ inválido.");
+       return;
+     }
+     if (!formData.email || !formData.phone || !formData.password) {
+       setError("Preencha todos os campos obrigatórios.");
+       return;
+     }
+     if (!consentGiven) {
+       setError("É necessário aceitar a Política de Privacidade e os Termos de Uso.");
+       return;
+     }
+ 
+     setLoading(true);
+     try {
++      const normalizedEmail = formData.email.trim().toLowerCase();
++
+       const { data: authData, error: authError } = await supabase.auth.signUp({
+-        email: formData.email,
++        email: normalizedEmail,
+         password: formData.password,
++        options: {
++          emailRedirectTo: `${window.location.origin}/dashboard`,
++          data: {
++            user_type: "mei",
++            phone: sanitizePhone(formData.phone),
++            business_name: formData.business_name,
++          },
++        },
+       });
+ 
+-      if (authError) throw authError;
++      if (authError) {
++        const normalizedMessage = (authError.message || "").toLowerCase();
++
++        if (
++          normalizedMessage.includes("duplicate key value") ||
++          normalizedMessage.includes("already registered") ||
++          authError.status === 409
++        ) {
++          setError(
++            "Este e-mail já está cadastrado. Faça login ou utilize a recuperação de senha."
++          );
++          setLoading(false);
++          return;
++        }
++
++        throw authError;
++      }
+       if (!authData?.user?.id) {
+         throw new Error("Não foi possível obter o usuário criado.");
+       }
+ 
+       const encryptedDocument = await encryptData(formData.document);
+ 
+       const { error: profileError } = await supabase.from("profiles").upsert({
+         id: authData.user.id,
+         name: formData.name,
+         document: encryptedDocument,
+         business_name: formData.business_name,
+         user_type: "mei",
++        contact_email: normalizedEmail,
++        phone: sanitizePhone(formData.phone),
+       }, { onConflict: "id", returning: "minimal" });
+ 
+       if (profileError) throw profileError;
+ 
+       setLoading(false);
+       navigate("/dashboard");
+     } catch (err) {
+-      setError("Erro no cadastro: " + (err.message || "Erro desconhecido"));
++      const normalizedMessage = (err?.message || "").toLowerCase();
++
++      if (
++        normalizedMessage.includes("duplicate key value") ||
++        normalizedMessage.includes("already registered")
++      ) {
++        setError(
++          "Este e-mail já está cadastrado. Faça login ou utilize a recuperação de senha."
++        );
++      } else {
++        setError("Erro no cadastro: " + (err?.message || "Erro desconhecido"));
++      }
+       setLoading(false);
+     }
+   };
+ 
+   return (
+     <div style={styles.pageContainer}>
+       <div style={styles.formSection}>
+         <div style={styles.formContainer}>
+           <Link to="/" style={styles.backLink}>
+             <span style={styles.backIcon}>{"\u2190"}</span>
+             <span>Voltar para a Home</span>
+           </Link>
+           <div style={styles.logoWrapper}>
+             <div style={styles.logoBadge}>
+               <img src={logo} alt="Logo GuiaMei" style={styles.logo} />
+             </div>
+             <h2 style={styles.title}>Cadastro MEI</h2>
+             <p style={styles.subtitle}>Informe seu CNPJ para buscarmos sua Razão Social automaticamente.</p>
+           </div>
+ 
+           {error && <div style={styles.error}>{error}</div>}
+ 
+           <form onSubmit={handleSubmit} style={styles.form}>
+             <div>
+               <label style={styles.label}>CNPJ</label>
+diff --git a/src/pages/CadastroPartner.jsx b/src/pages/CadastroPartner.jsx
+new file mode 100644
+index 0000000000000000000000000000000000000000..b75fb286c3a845c1a075f9e9c9c0c5973a8f2e31
+--- /dev/null
++++ b/src/pages/CadastroPartner.jsx
+@@ -0,0 +1,366 @@
++import { useState } from "react";
++import { Link, useNavigate } from "react-router-dom";
++import { supabase } from "../supabase/client.js";
++import { validateCNPJ } from "../utils/validators";
++import { encryptData } from "../utils/encryption";
++import logo from "../assets/logo.png";
++
++const CadastroPartner = () => {
++  const [formData, setFormData] = useState({
++    company_name: "",
++    document: "",
++    contact_name: "",
++    email: "",
++    phone: "",
++    password: "",
++  });
++  const [error, setError] = useState("");
++  const [loading, setLoading] = useState(false);
++  const [consentGiven, setConsentGiven] = useState(false);
++  const navigate = useNavigate();
++
++  const sanitizePhone = (value) => value.replace(/\D/g, "");
++
++  const handleDocumentChange = (event) => {
++    setFormData((prev) => ({ ...prev, document: event.target.value.replace(/\D/g, "") }));
++  };
++
++  const handleSubmit = async (event) => {
++    event.preventDefault();
++    setError("");
++
++    if (!formData.company_name || !formData.email || !formData.password) {
++      setError("Preencha todos os campos obrigatórios.");
++      return;
++    }
++    if (!consentGiven) {
++      setError("É necessário aceitar a Política de Privacidade e Termos de Uso.");
++      return;
++    }
++
++    if (formData.document && !validateCNPJ(formData.document)) {
++      setError("CNPJ inválido.");
++      return;
++    }
++
++    setLoading(true);
++
++    try {
++      const normalizedEmail = formData.email.trim().toLowerCase();
++      const sanitizedPhone = sanitizePhone(formData.phone);
++
++      const { data: authData, error: authError } = await supabase.auth.signUp({
++        email: normalizedEmail,
++        password: formData.password,
++        options: {
++          emailRedirectTo: `${window.location.origin}/dashboard-parceiro`,
++          data: {
++            user_type: "partner",
++            phone: sanitizedPhone,
++            company_name: formData.company_name,
++            contact_name: formData.contact_name,
++          },
++        },
++      });
++
++      if (authError) {
++        const normalizedMessage = (authError.message || "").toLowerCase();
++        if (
++          normalizedMessage.includes("duplicate key value") ||
++          normalizedMessage.includes("already registered") ||
++          authError.status === 409
++        ) {
++          setError("Este e-mail já está cadastrado. Faça login ou utilize a recuperação de senha.");
++          setLoading(false);
++          return;
++        }
++        throw authError;
++      }
++
++      const userId = authData?.user?.id;
++      if (!userId) {
++        throw new Error("Não foi possível obter o usuário criado.");
++      }
++
++      const encryptedDocument = formData.document
++        ? await encryptData(formData.document)
++        : null;
++
++      const { error: profileError } = await supabase.from("profiles").upsert(
++        {
++          id: userId,
++          name: formData.contact_name,
++          business_name: formData.company_name,
++          user_type: "partner",
++          contact_email: normalizedEmail,
++          phone: sanitizedPhone,
++          document: encryptedDocument,
++        },
++        { onConflict: "id", returning: "minimal" }
++      );
++
++      if (profileError) throw profileError;
++
++      const { error: partnerError } = await supabase.from("partners").insert([
++        {
++          user_id: userId,
++          company_name: formData.company_name,
++          document: encryptedDocument,
++          contact_email: normalizedEmail,
++          contact_phone: sanitizedPhone,
++        },
++      ]);
++
++      if (partnerError) {
++        throw partnerError;
++      }
++
++      setLoading(false);
++      navigate("/dashboard-parceiro");
++    } catch (err) {
++      const normalizedMessage = (err?.message || "").toLowerCase();
++      if (
++        normalizedMessage.includes("duplicate key value") ||
++        normalizedMessage.includes("already registered")
++      ) {
++        setError("Este e-mail já está cadastrado. Faça login ou utilize a recuperação de senha.");
++      } else {
++        setError("Erro no cadastro: " + (err?.message || "Erro desconhecido"));
++      }
++      setLoading(false);
++    }
++  };
++
++  return (
++    <div style={styles.pageContainer}>
++      <div style={styles.formSection}>
++        <div style={styles.formContainer}>
++          <Link to="/" style={styles.backLink}>
++            <span style={styles.backIcon}>{"\u2190"}</span>
++            <span>Voltar para a Home</span>
++          </Link>
++
++          <div style={styles.logoWrapper}>
++            <div style={styles.logoBadge}>
++              <img src={logo} alt="Logo GuiasMEI" style={styles.logo} />
++            </div>
++            <h2 style={styles.title}>Cadastro de Parceiros</h2>
++            <p style={styles.subtitle}>
++              Conecte sua carteira de clientes e acompanhe as emissões e comissões em um só lugar.
++            </p>
++          </div>
++
++          {error && <div style={styles.error}>{error}</div>}
++
++          <form onSubmit={handleSubmit} style={styles.form}>
++            <div>
++              <label style={styles.label}>Nome da Empresa</label>
++              <input
++                type="text"
++                value={formData.company_name}
++                onChange={(event) => setFormData({ ...formData, company_name: event.target.value })}
++                required
++                style={styles.input}
++                placeholder="Ex: Contabilidade XPTO"
++              />
++            </div>
++
++            <div>
++              <label style={styles.label}>CNPJ (opcional)</label>
++              <input
++                type="text"
++                value={formData.document}
++                onChange={handleDocumentChange}
++                placeholder="00.000.000/0000-00"
++                style={styles.input}
++              />
++            </div>
++
++            <div>
++              <label style={styles.label}>Responsável</label>
++              <input
++                type="text"
++                value={formData.contact_name}
++                onChange={(event) => setFormData({ ...formData, contact_name: event.target.value })}
++                required
++                style={styles.input}
++                placeholder="Nome completo"
++              />
++            </div>
++
++            <div>
++              <label style={styles.label}>E-mail</label>
++              <input
++                type="email"
++                value={formData.email}
++                onChange={(event) => setFormData({ ...formData, email: event.target.value })}
++                required
++                style={styles.input}
++                placeholder="contato@empresa.com"
++              />
++            </div>
++
++            <div>
++              <label style={styles.label}>Telefone (WhatsApp)</label>
++              <input
++                type="tel"
++                value={formData.phone}
++                onChange={(event) => setFormData({ ...formData, phone: event.target.value })}
++                placeholder="11999999999"
++                style={styles.input}
++              />
++            </div>
++
++            <div>
++              <label style={styles.label}>Senha</label>
++              <input
++                type="password"
++                value={formData.password}
++                onChange={(event) => setFormData({ ...formData, password: event.target.value })}
++                required
++                style={styles.input}
++              />
++            </div>
++
++            <label style={styles.checkboxContainer}>
++              <input
++                type="checkbox"
++                checked={consentGiven}
++                onChange={(event) => setConsentGiven(event.target.checked)}
++                style={styles.checkbox}
++              />
++              <span>
++                Concordo com a <Link to="/politica-privacidade">Política de Privacidade</Link> e os Termos de Uso.
++              </span>
++            </label>
++
++            <button type="submit" disabled={loading} style={styles.submitButton}>
++              {loading ? "Criando conta..." : "Criar conta de parceiro"}
++            </button>
++          </form>
++        </div>
++      </div>
++    </div>
++  );
++};
++
++const styles = {
++  pageContainer: {
++    display: "flex",
++    minHeight: "100vh",
++    background: "linear-gradient(135deg, #f1f5ff 0%, #f8fbff 100%)",
++    fontFamily: '"Inter", sans-serif',
++    justifyContent: "center",
++    alignItems: "center",
++    padding: "24px",
++  },
++  formSection: {
++    maxWidth: "520px",
++    width: "100%",
++    backgroundColor: "#ffffff",
++    padding: "40px",
++    borderRadius: "24px",
++    boxShadow: "0 28px 60px rgba(15, 23, 42, 0.08)",
++  },
++  formContainer: {
++    display: "flex",
++    flexDirection: "column",
++    gap: "24px",
++  },
++  backLink: {
++    display: "inline-flex",
++    alignItems: "center",
++    gap: "8px",
++    textDecoration: "none",
++    color: "#475569",
++    fontWeight: "500",
++  },
++  backIcon: {
++    fontSize: "18px",
++    lineHeight: "1",
++  },
++  logoWrapper: {
++    textAlign: "center",
++    display: "flex",
++    flexDirection: "column",
++    alignItems: "center",
++    gap: "12px",
++  },
++  logoBadge: {
++    width: "72px",
++    height: "72px",
++    borderRadius: "50%",
++    backgroundColor: "#e9f2ff",
++    display: "flex",
++    alignItems: "center",
++    justifyContent: "center",
++  },
++  logo: {
++    width: "48px",
++    height: "48px",
++    objectFit: "contain",
++  },
++  title: {
++    fontSize: "26px",
++    fontWeight: "700",
++    margin: 0,
++    color: "#1f2937",
++  },
++  subtitle: {
++    margin: 0,
++    color: "#64748b",
++    lineHeight: 1.5,
++  },
++  error: {
++    color: "#dc3545",
++    backgroundColor: "#f8d7da",
++    padding: "12px",
++    borderRadius: "8px",
++    border: "1px solid #f5c6cb",
++    fontSize: "14px",
++    textAlign: "center",
++  },
++  form: {
++    display: "flex",
++    flexDirection: "column",
++    gap: "18px",
++  },
++  label: {
++    fontWeight: "600",
++    marginBottom: "6px",
++    display: "block",
++    color: "#1f2937",
++  },
++  input: {
++    padding: "14px 16px",
++    borderRadius: "12px",
++    border: "1px solid #d5dbea",
++    fontSize: "16px",
++    transition: "border-color 0.2s ease, box-shadow 0.2s ease",
++  },
++  checkboxContainer: {
++    display: "flex",
++    alignItems: "center",
++    gap: "10px",
++    fontSize: "14px",
++    color: "#475569",
++  },
++  checkbox: {
++    width: "18px",
++    height: "18px",
++    accentColor: "#007bff",
++  },
++  submitButton: {
++    padding: "16px",
++    fontSize: "16px",
++    fontWeight: "bold",
++    backgroundColor: "#007bff",
++    color: "#fff",
++    border: "none",
++    borderRadius: "12px",
++    cursor: "pointer",
++    transition: "background-color 0.2s ease, opacity 0.2s ease",
++  },
++};
++
++export default CadastroPartner;
+diff --git a/src/pages/DashboardPartner.jsx b/src/pages/DashboardPartner.jsx
+index 6f3823912b04d8fedc8e914359bb437486bb195c..1fc4000aa1756d1e5f1d27fe0af0321b63b1c451 100644
+--- a/src/pages/DashboardPartner.jsx
++++ b/src/pages/DashboardPartner.jsx
+@@ -17,58 +17,67 @@ const DashboardPartner = () => {
+   const calculateStats = useCallback(async (clientList) => {
+     if (!clientList?.length) return;
+     const clientIds = clientList.map(c => c.client_id);
+ 
+     const { data: nfseData, error: nfseError } = await supabase.from('nfse_emissions').select('id').in('user_id', clientIds).eq('status', 'issued');
+     if (nfseError) throw nfseError;
+ 
+     const { data: gpsData, error: gpsError } = await supabase.from('gps_emissions').select('value').in('user_id', clientIds).eq('status', 'issued');
+     if (gpsError) throw gpsError;
+ 
+     const nfseCount = nfseData?.length || 0;
+     const gpsTotalValue = gpsData?.reduce((sum, gps) => sum + gps.value, 0) || 0;
+     const totalRevenue = (nfseCount * 3.0) + (gpsTotalValue * 0.06);
+ 
+     setStats({ total_nfse: nfseCount, total_gps: gpsData?.length || 0, total_revenue: totalRevenue });
+   }, []);
+ 
+   const fetchPartnerData = useCallback(async () => {
+     try {
+       const { data: { user: authUser } } = await supabase.auth.getUser();
+       if (!authUser || authUser.user_metadata?.user_type !== 'partner') {
+         navigate('/login');
+         return;
+       }
+ 
+-      const { data: partnerData, error: partnerError } = await supabase.from('partners').select('*').eq('id', authUser.id).single();
++      const { data: partnerData, error: partnerError } = await supabase
++        .from('partners')
++        .select('*')
++        .eq('user_id', authUser.id)
++        .maybeSingle();
+       if (partnerError) throw partnerError;
++      if (!partnerData) {
++        setError('Cadastro de parceiro não encontrado. Complete o cadastro ou contate o suporte.');
++        setLoading(false);
++        return;
++      }
+       setPartner(partnerData);
+ 
+       const { data: clientData, error: clientError } = await supabase
+         .from('partner_clients')
+         .select('client_id, created_at, profile:profiles!inner(*)')
+-        .eq('partner_id', authUser.id);
++        .eq('partner_id', partnerData.id);
+       if (clientError) throw clientError;
+ 
+       const decryptedClients = await Promise.all(
+         clientData.map(async (client) => {
+           const decryptedDocument = client.profile.document ? await decryptData(client.profile.document) : '';
+           return { ...client, profile: { ...client.profile, document: decryptedDocument } };
+         })
+       );
+       setClients(decryptedClients);
+       await calculateStats(decryptedClients);
+       setLoading(false);
+     } catch (err) {
+       setError('Erro ao carregar dados: ' + err.message);
+       setLoading(false);
+     }
+   }, [navigate, calculateStats]);
+ 
+   useEffect(() => {
+     fetchPartnerData();
+   }, [fetchPartnerData]);
+ 
+   const handleAddClient = async (e) => {
+     e.preventDefault();
+     // Add client logic here
+   };
+diff --git a/src/pages/EmitirGpsPage.jsx b/src/pages/EmitirGpsPage.jsx
+index eb214456d641a01c65f6cc0f76b2adf51bbe0cb0..3c047f8e04cd0ae451674302b24e1f4b99610cdd 100644
+--- a/src/pages/EmitirGpsPage.jsx
++++ b/src/pages/EmitirGpsPage.jsx
+@@ -1,38 +1,41 @@
+ // src/pages/EmitirGpsPage.jsx
+ import React, { useState, useEffect } from 'react';
+ import { supabase } from '../supabase/client';
++import { gerarGuiaEsocial } from '../services/integrations/esocialClient';
++import { decryptData } from '../utils/encryption';
+ import { useNavigate } from 'react-router-dom';
+ import logo from '../assets/logo.png';
+ 
+ const EmitirGpsPage = () => {
+   const [user, setUser] = useState(null);
+   const [profile, setProfile] = useState(null);
+   const [loading, setLoading] = useState(true);
+   const [formLoading, setFormLoading] = useState(false);
+   const [error, setError] = useState('');
+   const [success, setSuccess] = useState('');
++  const [integrationAlert, setIntegrationAlert] = useState('');
+   const navigate = useNavigate();
+ 
+   const [formData, setFormData] = useState({
+     month_ref: '',
+     value: '',
+   });
+ 
+   useEffect(() => {
+     const fetchUserData = async () => {
+       try {
+         const { data: { user: authUser } } = await supabase.auth.getUser();
+         if (!authUser) {
+           navigate('/login'); // Redirect to login instead of cadastro
+           return;
+         }
+         setUser(authUser);
+ 
+         const { data: profileData, error: profileError } = await supabase
+           .from('profiles')
+           .select('*')
+           .eq('id', authUser.id)
+           .single();
+ 
+         if (profileError) throw profileError;
+         setProfile(profileData);
+@@ -51,124 +54,188 @@ const EmitirGpsPage = () => {
+     };
+ 
+     fetchUserData();
+   }, [navigate]);
+ 
+   const handleChange = (e) => {
+     setFormData({ ...formData, [e.target.name]: e.target.value });
+   };
+ 
+   const validateForm = () => {
+     if (!formData.month_ref) {
+       setError('Selecione o mês de competência.');
+       return false;
+     }
+     if (!formData.value || parseFloat(formData.value) <= 0) {
+       setError('O valor da contribuição deve ser maior que zero.');
+       return false;
+     }
+     return true;
+   };
+ 
+   const handleSubmit = async (e) => {
+     e.preventDefault();
+     setError('');
+     setSuccess('');
++    setIntegrationAlert('');
+ 
+     if (!validateForm()) return;
+ 
+     setFormLoading(true);
+     try {
+-      const simulatedBarcode = `846700000000${Math.floor(Math.random() * 1000000000).toString().padStart(9, '0')}`;
+-      const simulatedPdfUrl = `https://rebelo.app/mock-gps/${Date.now()}.pdf`;
++      let integrationMode = 'production';
++      let guideResponse;
+ 
+-      const { error: insertError } = await supabase.from('gps_emissions').insert({
++      try {
++        let documento = profile?.document || null;
++        let pis = profile?.pis || null;
++
++        try {
++          documento = profile?.document ? await decryptData(profile.document) : documento;
++        } catch (decryptError) {
++          console.warn('Não foi possível descriptografar o documento para o eSocial', decryptError);
++        }
++
++        try {
++          pis = profile?.pis ? await decryptData(profile.pis) : pis;
++        } catch (decryptError) {
++          console.warn('Não foi possível descriptografar o PIS para o eSocial', decryptError);
++        }
++
++        guideResponse = await gerarGuiaEsocial({
++          competencia: formData.month_ref,
++          valor: parseFloat(formData.value),
++          contribuinte: {
++            id: profile?.id,
++            nome: profile?.name,
++            documento,
++            pis,
++          },
++        });
++      } catch (integrationError) {
++        console.warn('Falha na integração com o eSocial', integrationError);
++        integrationMode = 'simulated';
++        setIntegrationAlert('Não foi possível conectar ao eSocial. Uma guia simulada foi gerada para testes.');
++        const simulatedId = `SIM-GPS-${Date.now()}`;
++        const simulatedBarcode = `846700000000${Math.floor(Math.random() * 1000000000).toString().padStart(9, '0')}`;
++        guideResponse = {
++          guideId: simulatedId,
++          barcode: simulatedBarcode,
++          status: 'simulated',
++          pdfUrl: null,
++          raw: {
++            error: integrationError.message,
++            integration: 'esocial',
++          },
++        };
++      }
++
++      const record = {
+         user_id: user.id,
+         value: parseFloat(formData.value),
+         month_ref: formData.month_ref,
+-        barcode: simulatedBarcode,
+-        pdf_url: simulatedPdfUrl,
+-        status: 'issued',
++        barcode: guideResponse.barcode,
++        pdf_url: guideResponse.pdfUrl,
++        status: guideResponse.status || 'issued',
+         inss_code: profile.pis || profile.document,
+-      });
++        guide_id: guideResponse.guideId,
++        integration_mode: integrationMode,
++        raw_response: guideResponse.raw,
++      };
+ 
++      const { error: insertError } = await supabase.from('gps_emissions').insert(record);
+       if (insertError) throw insertError;
+ 
+       setSuccess({
+-        message: 'Guia GPS emitida com sucesso!',
++        message:
++          integrationMode === 'production'
++            ? 'Guia GPS emitida com sucesso!'
++            : 'Guia GPS gerada em modo de testes.',
+         month: formData.month_ref,
+         value: parseFloat(formData.value).toFixed(2),
+-        barcode: simulatedBarcode,
++        barcode: record.barcode,
++        guideId: record.guide_id,
++        pdfUrl: record.pdf_url,
++        integrationMode,
+       });
+ 
+       setFormData({ month_ref: '', value: '' });
+ 
+     } catch (err) {
+       setError('Erro ao emitir guia: ' + err.message);
+     } finally {
+       setFormLoading(false);
+     }
+   };
+ 
+   if (loading) {
+     return <div style={styles.centered}><div style={styles.spinner}></div></div>;
+   }
+ 
+   return (
+     <div style={styles.dashboardContainer}>
+       {/* Sidebar can be a shared component */}
+       <aside style={styles.sidebar}>
+         <img src={logo} alt="Rebelo App Logo" style={styles.logo} />
+         <nav style={styles.nav}>
+           <button style={styles.navLink} onClick={() => navigate('/dashboard')}><span>🏠</span> Dashboard</button>
+           <button style={styles.navLink} onClick={() => navigate('/emitir-nota')}><span>📄</span> Emitir NFS-e</button>
+           <button style={{...styles.navLink, ...styles.activeNavLink}}><span>💰</span> Emitir Guia GPS</button>
+         </nav>
+         <div style={styles.logoutButton} onClick={() => supabase.auth.signOut().then(() => navigate('/'))}>
+           <span>🚪</span> Sair
+         </div>
+       </aside>
+ 
+       <main style={styles.mainContent}>
+         <header style={styles.header}>
+           <h2>Emitir Guia de Previdência Social (GPS)</h2>
+           <p>Preencha os dados para gerar sua guia de contribuição.</p>
+         </header>
+ 
+         <div style={styles.formCard}>
+           {error && <div style={styles.error}>{error}</div>}
+-          
++          {integrationAlert && <div style={styles.alert}>{integrationAlert}</div>}
++
+           {success ? (
+             <div style={styles.successContainer}>
+               <h3>{success.message}</h3>
+               <p><strong>Mês de Competência:</strong> {success.month}</p>
+               <p><strong>Valor:</strong> R$ {success.value}</p>
++              {success.guideId && (
++                <p style={styles.protocolText}><strong>Número da guia:</strong> {success.guideId}</p>
++              )}
+               <div style={styles.barcodeContainer}>
+                 <p><strong>Código de Barras:</strong></p>
+                 <p style={styles.barcode}>{success.barcode}</p>
+                 <button onClick={() => navigator.clipboard.writeText(success.barcode)} style={styles.copyButton}>Copiar Código</button>
+               </div>
++              {success.pdfUrl && (
++                <a href={success.pdfUrl} target="_blank" rel="noreferrer" style={styles.linkButton}>
++                  📄 Baixar Guia
++                </a>
++              )}
+               <button onClick={() => setSuccess('')} style={styles.submitButton}>Emitir Outra Guia</button>
+             </div>
+           ) : (
+             <form onSubmit={handleSubmit}>
+               <div style={styles.formGroup}>
+                 <label style={styles.label}>Mês de Competência *</label>
+                 <input
+                   type="month"
+                   name="month_ref"
+                   value={formData.month_ref}
+                   onChange={handleChange}
+                   required
+                   style={styles.input}
+                 />
+               </div>
+ 
+               <div style={styles.formGroup}>
+                 <label style={styles.label}>Valor da Contribuição (R$) *</label>
+                 <input
+                   type="number"
+                   step="0.01"
+                   name="value"
+                   value={formData.value}
+                   onChange={handleChange}
+                   required
+@@ -300,46 +367,71 @@ const styles = {
+   successContainer: {
+     textAlign: 'center',
+   },
+   barcodeContainer: {
+     margin: '20px 0',
+     padding: '20px',
+     backgroundColor: '#f8f9fa',
+     borderRadius: '8px',
+   },
+   barcode: {
+     fontFamily: 'monospace',
+     fontSize: '18px',
+     wordBreak: 'break-all',
+     color: '#212529',
+   },
+   copyButton: {
+     padding: '8px 15px',
+     fontSize: '14px',
+     backgroundColor: '#007bff',
+     color: 'white',
+     border: 'none',
+     borderRadius: '6px',
+     cursor: 'pointer',
+     marginTop: '10px',
+   },
++  linkButton: {
++    display: 'inline-flex',
++    alignItems: 'center',
++    justifyContent: 'center',
++    gap: '8px',
++    padding: '12px 18px',
++    backgroundColor: '#198754',
++    color: '#fff',
++    borderRadius: '8px',
++    textDecoration: 'none',
++    fontWeight: 600,
++    marginBottom: '12px',
++  },
++  protocolText: {
++    marginBottom: '12px',
++    color: '#495057',
++  },
++  alert: {
++    backgroundColor: '#fff3cd',
++    color: '#856404',
++    padding: '12px 16px',
++    borderRadius: '8px',
++    border: '1px solid #ffeeba',
++    marginBottom: '20px',
++  },
+   centered: {
+     display: 'flex',
+     alignItems: 'center',
+     justifyContent: 'center',
+     minHeight: '100vh',
+   },
+   spinner: {
+     border: '4px solid #f3f3f3',
+     borderTop: '4px solid #007bff',
+     borderRadius: '50%',
+     width: '40px',
+     height: '40px',
+     animation: 'spin 1s linear infinite',
+   },
+   '@keyframes spin': {
+     '0%': { transform: 'rotate(0deg)' },
+     '100%': { transform: 'rotate(360deg)' },
+   },
+ };
+ 
+ export default EmitirGpsPage;
+diff --git a/src/pages/EmitirNotaPage.jsx b/src/pages/EmitirNotaPage.jsx
+index 3202cee4d0288b3a6861efff37e5ac780a7b1a2f..0df2d3cb22f2814191b920546bf99ba41deabad6 100644
+--- a/src/pages/EmitirNotaPage.jsx
++++ b/src/pages/EmitirNotaPage.jsx
+@@ -1,38 +1,41 @@
+ // src/pages/EmitirNotaPage.jsx
+ import React, { useState, useEffect } from 'react';
+ import { supabase } from '../supabase/client';
++import { emitirNfse } from '../services/integrations/emissorNacionalClient';
++import { decryptData } from '../utils/encryption';
+ import { useNavigate } from 'react-router-dom';
+ import logo from '../assets/logo.png';
+ 
+ const EmitirNotaPage = () => {
+   const [user, setUser] = useState(null);
+   const [profile, setProfile] = useState(null);
+   const [loading, setLoading] = useState(true);
+   const [formLoading, setFormLoading] = useState(false);
+   const [error, setError] = useState('');
+   const [success, setSuccess] = useState('');
++  const [integrationAlert, setIntegrationAlert] = useState('');
+   const navigate = useNavigate();
+ 
+   const [formData, setFormData] = useState({
+     tomador_nome: '',
+     tomador_cpf_cnpj: '',
+     tomador_email: '',
+     valor: '',
+     descricao_servico: '',
+   });
+ 
+   useEffect(() => {
+     const fetchUserData = async () => {
+       try {
+         const { data: { user: authUser } } = await supabase.auth.getUser();
+         if (!authUser) {
+           navigate('/login');
+           return;
+         }
+         setUser(authUser);
+ 
+         const { data: profileData, error: profileError } = await supabase
+           .from('profiles')
+           .select('*')
+           .eq('id', authUser.id)
+           .single();
+@@ -50,124 +53,198 @@ const EmitirNotaPage = () => {
+       } catch (err) {
+         setError('Erro ao carregar dados: ' + err.message);
+         setLoading(false);
+       }
+     };
+ 
+     fetchUserData();
+   }, [navigate]);
+ 
+   const handleChange = (e) => {
+     setFormData({ ...formData, [e.target.name]: e.target.value });
+   };
+ 
+   const validateForm = () => {
+     if (!formData.tomador_nome || !formData.tomador_cpf_cnpj || !formData.valor || !formData.descricao_servico) {
+       setError('Preencha todos os campos obrigatórios.');
+       return false;
+     }
+     return true;
+   };
+ 
+   const handleSubmit = async (e) => {
+     e.preventDefault();
+     setError('');
+     setSuccess('');
++    setIntegrationAlert('');
+ 
+     if (!validateForm()) return;
+ 
+     setFormLoading(true);
+     try {
+-      const simulatedNfseKey = `NFSE-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+-      const simulatedPdfUrl = `https://rebelo.app/mock-nfse/${simulatedNfseKey}.pdf`;
++      let integrationMode = 'production';
++      let emissionResponse;
+ 
+-      const { error: insertError } = await supabase.from('nfse_emissions').insert({
++      try {
++        let prestadorDocumento = profile?.document || null;
++        try {
++          prestadorDocumento = profile?.document ? await decryptData(profile.document) : prestadorDocumento;
++        } catch (decryptError) {
++          console.warn('Não foi possível descriptografar o documento do prestador', decryptError);
++        }
++
++        let prestadorNome = profile?.name;
++        try {
++          prestadorNome = profile?.name && profile?.name.length ? profile.name : profile?.business_name;
++        } catch (_ignore) {
++          prestadorNome = profile?.name;
++        }
++
++        emissionResponse = await emitirNfse({
++          tomador: {
++            nome: formData.tomador_nome,
++            documento: formData.tomador_cpf_cnpj,
++            email: formData.tomador_email || undefined,
++          },
++          servico: {
++            descricao: formData.descricao_servico,
++            valor: parseFloat(formData.valor),
++          },
++          prestador: {
++            id: profile?.id,
++            nome: prestadorNome,
++            documento: prestadorDocumento,
++          },
++        });
++      } catch (integrationError) {
++        console.warn('Falha na integração com o Emissor Nacional', integrationError);
++        integrationMode = 'simulated';
++        setIntegrationAlert('Não foi possível conectar ao Emissor Nacional. Uma nota simulada foi gerada para testes.');
++        const simulatedKey = `SIM-NFSE-${Date.now()}`;
++        emissionResponse = {
++          nfseKey: simulatedKey,
++          protocol: null,
++          status: 'simulated',
++          pdfUrl: null,
++          issuedAt: new Date().toISOString(),
++          raw: {
++            error: integrationError.message,
++            integration: 'emissor-nacional',
++          },
++        };
++      }
++
++      const record = {
+         user_id: user.id,
+         value: parseFloat(formData.valor),
+         service_description: formData.descricao_servico,
+-        issued_at: new Date().toISOString(),
+-        nfse_key: simulatedNfseKey,
+-        status: 'issued',
++        issued_at: emissionResponse.issuedAt || new Date().toISOString(),
++        nfse_key: emissionResponse.nfseKey || `SIM-NFSE-${Date.now()}`,
++        status: emissionResponse.status || 'issued',
+         tomador: {
+           nome: formData.tomador_nome,
+           documento: formData.tomador_cpf_cnpj,
+           email: formData.tomador_email,
+         },
+-        pdf_url: simulatedPdfUrl,
+-      });
++        pdf_url: emissionResponse.pdfUrl,
++        protocol: emissionResponse.protocol,
++        integration_mode: integrationMode,
++        raw_response: emissionResponse.raw,
++      };
++
++      const { error: insertError } = await supabase.from('nfse_emissions').insert(record);
+ 
+       if (insertError) throw insertError;
+ 
+       setSuccess({
+-        message: 'Nota Fiscal emitida com sucesso!',
+-        key: simulatedNfseKey,
++        message:
++          integrationMode === 'production'
++            ? 'Nota Fiscal emitida com sucesso!'
++            : 'Nota fiscal gerada em modo de testes.',
++        key: record.nfse_key,
++        protocol: record.protocol,
++        pdfUrl: record.pdf_url,
++        integrationMode,
+       });
+       setFormData({ tomador_nome: '', tomador_cpf_cnpj: '', tomador_email: '', valor: '', descricao_servico: '' });
+ 
+     } catch (err) {
+       setError('Erro ao emitir nota: ' + err.message);
+     } finally {
+       setFormLoading(false);
+     }
+   };
+ 
+   if (loading) {
+     return <div style={styles.centered}><div style={styles.spinner}></div></div>;
+   }
+ 
+   return (
+     <div style={styles.dashboardContainer}>
+       <aside style={styles.sidebar}>
+         <img src={logo} alt="Rebelo App Logo" style={styles.logo} />
+         <nav style={styles.nav}>
+             <button style={styles.navLink} onClick={() => navigate('/dashboard')}><span>🏠</span> Dashboard</button>
+             <button style={{...styles.navLink, ...styles.activeNavLink}}><span>📄</span> Emitir NFS-e</button>
+             <button style={styles.navLink} onClick={() => navigate('/emitir-gps')}><span>💰</span> Emitir Guia GPS</button>
+         </nav>
+         <div style={styles.logoutButton} onClick={() => supabase.auth.signOut().then(() => navigate('/'))}>
+           <span>🚪</span> Sair
+         </div>
+       </aside>
+ 
+       <main style={styles.mainContent}>
+         <header style={styles.header}>
+           <h2>Emitir Nota Fiscal de Serviço (NFS-e)</h2>
+           <p>Preencha os dados do serviço prestado e do tomador.</p>
+         </header>
+ 
+         <div style={styles.formCard}>
+           {error && <div style={styles.error}>{error}</div>}
+-          
++          {integrationAlert && <div style={styles.alert}>{integrationAlert}</div>}
++
+           {success ? (
+             <div style={styles.successContainer}>
+               <h3>{success.message}</h3>
+-              <p>A nota foi registrada em nosso sistema e uma simulação foi gerada.</p>
++              <p>
++                {success.integrationMode === 'production'
++                  ? 'A nota foi registrada em nosso sistema e enviada para o Emissor Nacional.'
++                  : 'A nota foi registrada em modo de testes para que você possa validar o fluxo.'}
++              </p>
+               <div style={styles.barcodeContainer}>
+                 <p><strong>Chave da NFS-e:</strong></p>
+                 <p style={styles.barcode}>{success.key}</p>
+                 <button onClick={() => navigator.clipboard.writeText(success.key)} style={styles.copyButton}>Copiar Chave</button>
+               </div>
++              {success.protocol && (
++                <p style={styles.protocolText}><strong>Protocolo:</strong> {success.protocol}</p>
++              )}
++              {success.pdfUrl && (
++                <a href={success.pdfUrl} target="_blank" rel="noreferrer" style={styles.linkButton}>
++                  📄 Baixar DANF-e
++                </a>
++              )}
+               <button onClick={() => setSuccess('')} style={styles.submitButton}>Emitir Outra Nota</button>
+             </div>
+           ) : (
+             <form onSubmit={handleSubmit}>
+               <div style={styles.grid2Cols}>
+                 <div style={styles.formGroup}>
+                   <label style={styles.label}>Nome do Tomador *</label>
+                   <input type="text" name="tomador_nome" value={formData.tomador_nome} onChange={handleChange} required style={styles.input} />
+                 </div>
+                 <div style={styles.formGroup}>
+                   <label style={styles.label}>CPF/CNPJ do Tomador *</label>
+                   <input type="text" name="tomador_cpf_cnpj" value={formData.tomador_cpf_cnpj} onChange={handleChange} required style={styles.input} />
+                 </div>
+               </div>
+               <div style={styles.grid2Cols}>
+                 <div style={styles.formGroup}>
+                   <label style={styles.label}>E-mail do Tomador</label>
+                   <input type="email" name="tomador_email" value={formData.tomador_email} onChange={handleChange} style={styles.input} />
+                 </div>
+                 <div style={styles.formGroup}>
+                   <label style={styles.label}>Valor do Serviço (R$) *</label>
+                   <input type="number" step="0.01" min="0.01" name="valor" value={formData.valor} onChange={handleChange} required style={styles.input} />
+                 </div>
+               </div>
+               <div style={styles.formGroup}>
+@@ -184,31 +261,34 @@ const EmitirNotaPage = () => {
+     </div>
+   );
+ };
+ 
+ const styles = {
+   dashboardContainer: { display: 'flex', minHeight: '100vh', fontFamily: '"Inter", sans-serif', backgroundColor: '#f8f9fa' },
+   sidebar: { width: '250px', backgroundColor: '#fff', padding: '30px 20px', display: 'flex', flexDirection: 'column', borderRight: '1px solid #dee2e6' },
+   logo: { height: '50px', marginBottom: '40px', alignSelf: 'center' },
+   nav: { display: 'flex', flexDirection: 'column', gap: '10px', flexGrow: 1 },
+   navLink: { textDecoration: 'none', color: '#495057', padding: '12px 15px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '12px', fontWeight: 500, transition: 'background-color 0.2s, color 0.2s', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' },
+   activeNavLink: { backgroundColor: '#e9ecef', color: '#007bff' },
+   logoutButton: { padding: '12px 15px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '12px', fontWeight: 500, color: '#dc3545', cursor: 'pointer', transition: 'background-color 0.2s' },
+   mainContent: { flex: 1, padding: '40px' },
+   header: { marginBottom: '30px' },
+   formCard: { backgroundColor: '#fff', padding: '40px', borderRadius: '12px', boxShadow: '0 4px 20px rgba(0,0,0,0.05)' },
+   grid2Cols: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' },
+   formGroup: { marginBottom: '20px' },
+   label: { fontWeight: '500', marginBottom: '8px', display: 'block', color: '#495057' },
+   input: { padding: '12px 15px', fontSize: '16px', border: '1px solid #ced4da', borderRadius: '8px', width: '100%', boxSizing: 'border-box' },
+   submitButton: { width: '100%', padding: '15px', fontSize: '16px', fontWeight: 'bold', backgroundColor: '#28a745', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', marginTop: '10px' },
+   error: { color: '#dc3545', backgroundColor: '#f8d7da', padding: '12px', borderRadius: '8px', marginBottom: '20px' },
+   successContainer: { textAlign: 'center' },
+   barcodeContainer: { margin: '20px 0', padding: '20px', backgroundColor: '#f8f9fa', borderRadius: '8px' },
+   barcode: { fontFamily: 'monospace', fontSize: '16px', wordBreak: 'break-all', color: '#212529' },
+   copyButton: { padding: '8px 15px', fontSize: '14px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', marginTop: '10px' },
++  protocolText: { marginBottom: '12px', color: '#495057' },
++  linkButton: { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '12px 18px', backgroundColor: '#198754', color: '#fff', borderRadius: '8px', textDecoration: 'none', fontWeight: 600, marginBottom: '12px' },
+   centered: { display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' },
+   spinner: { border: '4px solid #f3f3f3', borderTop: '4px solid #007bff', borderRadius: '50%', width: '40px', height: '40px', animation: 'spin 1s linear infinite' },
++  alert: { backgroundColor: '#fff3cd', color: '#856404', padding: '12px 16px', borderRadius: '8px', border: '1px solid #ffeeba', marginBottom: '20px' },
+   '@keyframes spin': { '0%': { transform: 'rotate(0deg)' }, '100%': { transform: 'rotate(360deg)' } },
+ };
+ 
+ export default EmitirNotaPage;
+\ No newline at end of file
+diff --git a/src/pages/ErrorPage.jsx b/src/pages/ErrorPage.jsx
+new file mode 100644
+index 0000000000000000000000000000000000000000..1e7be076d547e8fa1f1d6ad115b118e95e3509c7
+--- /dev/null
++++ b/src/pages/ErrorPage.jsx
+@@ -0,0 +1,75 @@
++import { Link } from 'react-router-dom';
++
++const containerStyle = {
++  minHeight: '100vh',
++  display: 'flex',
++  flexDirection: 'column',
++  justifyContent: 'center',
++  alignItems: 'center',
++  background: 'linear-gradient(135deg, #f0f4ff 0%, #f7f9fc 100%)',
++  fontFamily: '"Inter", sans-serif',
++  padding: '24px',
++  textAlign: 'center',
++};
++
++const cardStyle = {
++  backgroundColor: '#ffffff',
++  padding: '48px 40px',
++  borderRadius: '16px',
++  boxShadow: '0 20px 60px rgba(15, 23, 42, 0.12)',
++  maxWidth: '520px',
++  width: '100%',
++};
++
++const titleStyle = {
++  fontSize: '32px',
++  fontWeight: 700,
++  color: '#1e293b',
++  marginBottom: '12px',
++};
++
++const descriptionStyle = {
++  color: '#475569',
++  fontSize: '16px',
++  lineHeight: 1.6,
++  marginBottom: '32px',
++};
++
++const buttonStyle = {
++  display: 'inline-flex',
++  alignItems: 'center',
++  gap: '8px',
++  padding: '14px 24px',
++  borderRadius: '10px',
++  backgroundColor: '#2563eb',
++  color: '#ffffff',
++  textDecoration: 'none',
++  fontWeight: 600,
++  transition: 'transform 0.2s ease, box-shadow 0.2s ease',
++};
++
++const helperStyle = {
++  marginTop: '16px',
++  color: '#64748b',
++  fontSize: '14px',
++};
++
++const ErrorPage = () => (
++  <div style={containerStyle}>
++    <div style={cardStyle}>
++      <h1 style={titleStyle}>Página não encontrada</h1>
++      <p style={descriptionStyle}>
++        O conteúdo que você tentou acessar não existe ou foi movido. Utilize os atalhos abaixo para voltar ao fluxo principal
++        da plataforma.
++      </p>
++      <Link to="/" style={buttonStyle}>
++        <span>Voltar para a página inicial</span>
++      </Link>
++      <p style={helperStyle}>
++        Precisa de ajuda? Entre em contato pelo chat do dashboard ou envie um e-mail para suporte@rebelo.app.
++      </p>
++    </div>
++  </div>
++);
++
++export default ErrorPage;
+diff --git a/src/pages/HomePage.jsx b/src/pages/HomePage.jsx
+index d45066f2e0aaa57bc11f06b22a23de1391bac8e3..5771a70c1f35577ba71283ee839688321ef76c43 100644
+--- a/src/pages/HomePage.jsx
++++ b/src/pages/HomePage.jsx
+@@ -108,58 +108,58 @@ const HomePage = () => {
+               description="Escritórios contábeis que querem oferecer este serviço aos seus clientes MEI."
+             />
+           </div>
+         </div>
+       </section>
+ 
+       {/* Como funciona */}
+       <section id="como-funciona" style={styles.howItWorks}>
+         <div style={styles.sectionHeader}>
+           <h2 style={styles.sectionTitle}>Como funciona em 3 passos simples</h2>
+           <p style={styles.sectionSubtitle}>
+             Do cadastro à emissão de documentos fiscais, tudo pelo WhatsApp com nossa IA.
+           </p>
+         </div>
+ 
+         <div style={styles.stepsGrid}>
+           <StepCard
+             number="1"
+             title="Cadastre-se como MEI ou Autônomo"
+             description="Informe seu CNPJ e nossa IA busca automaticamente seus dados na Receita Federal. Ou faça o cadastro de autônomo. Rápido e seguro."
+             image={notaCard}
+           />
+           <StepCard
+             number="2"
+             title="Converse no WhatsApp"
+-            description="Nossa IA te guia pelo processo de adesão. SEM MENSALIDADES. Pague R$ 150.00 uma única vez e ative sua conta. Pague somente se usar. R$ 3,00 por nota ou 6% sobre a o valor da Guia de GPS (INSS)"
++            description="Nossa IA te guia pelo processo de adesão. SEM MENSALIDADES. Pague R$ 150,00 uma única vez para ativar sua conta e só tenha custos por uso: R$ 3,00 por nota ou 6% sobre o valor da Guia de GPS (INSS)."
+             image={whatsAppCard}
+           />
+           <StepCard
+             number="3"
+             title="Emita documentos fiscais"
+             description="Solicite notas fiscais (NFS-e) e guias de GPS (INSS) direto pelo whatsApp. Simples assim!"
+-            image={card3} //
++            image={card3}
+           />
+         </div>
+ 
+         <div style={styles.whatsappDemo}>
+           <div style={styles.demoContent}>
+             <h3 style={styles.demoTitle}>Veja como é fácil emitir uma nota fiscal:</h3>
+             <div style={styles.chatDemo}>
+               <div style={styles.chatMessage}>
+                 <span style={styles.userMessage}>Oi! Preciso emitir uma nota fiscal de R$ 1.500 para a empresa XYZ</span>
+               </div>
+               <div style={styles.chatMessage}>
+                 <span style={styles.botMessage}>
+                   🤖 Perfeito! Vou te ajudar a emitir essa NFS-e.<br/>
+                   Confirme os dados:<br/>
+                   💰 Valor: R$ 1.500,00<br/>
+                   🏢 Cliente: XYZ<br/>
+                   📝 Serviço: [Digite a descrição]
+                 </span>
+               </div>
+               <div style={styles.chatMessage}>
+                 <span style={styles.userMessage}>Desenvolvimento de sistema web</span>
+               </div>
+               <div style={styles.chatMessage}>
+                 <span style={styles.botMessage}>
+                   ✅ Nota fiscal emitida com sucesso!<br/>
+@@ -168,56 +168,56 @@ const HomePage = () => {
+                   💻 Disponível no seu dashboard
+                 </span>
+               </div>
+             </div>
+           </div>
+           <div style={styles.demoImage}>
+             <img
+               src="https://sebrae.com.br/Sebrae/Portal%20Sebrae/UFs/AP/Imagens/artigo%2Bnfse%2B14.png"
+               alt="WhatsApp no celular"
+               style={styles.phoneImage}
+             />
+           </div>
+         </div>
+ 
+           <div style={styles.whatsappDemo}>
+           <div style={styles.demoContent}>
+             <h3 style={styles.demoTitle}>Veja como é fácil emitir a Guia de GPS (INSS):</h3>
+             <div style={styles.chatDemo}>
+               <div style={styles.chatMessage}>
+                 <span style={styles.userMessage}>Oi! quero pagar meu INSS deste mês, pode me enviar a guia?</span>
+               </div>
+               <div style={styles.chatMessage}>
+                 <span style={styles.botMessage}>
+                   🤖 Perfeito! Vou te ajudar a emitir sua guia de INSS<br/>
+                   Confirme os dados:<br/><br/>
+-                  💰 Valor que você quer contribuir?<br/>
+-                  💰 Valor: R$ 1.510,00 - Um salário mínimo<br/>
+-                  💰 Valor: Outro valor acima do salário mínimo? <br/>
+-                  💰 digite o valor: <br/><br/>
+-                  🏢 Cliente: 1.800,00<br/><br/>
+-                  🤖 Qual tipo de autono você pegar pagar?<br/><br/>
++                  💰 Valores disponíveis:<br/>
++                  • R$ 1.510,00 (salário mínimo)<br/>
++                  • Informar outro valor acima do mínimo<br/>
++                  ✍️ Digite o valor desejado e continuaremos.<br/><br/>
++                  🗓 Competência: 02/2024<br/><br/>
++                  🤖 Qual tipo de autônomo você deseja pagar?<br/><br/>
+                   1. Trabalhador Autônomo (8% INSS)<br/>
+                   2. Contribuinte Individual (20% INSS)<br/>  
+                   3. Facultativo (11% INSS)<br/>
+                   4. MEI (5% INSS)<br/>
+                   5. Outro<br/>  
+                   
+                 </span>
+               </div>
+               <div style={styles.chatMessage}>
+                 <span style={styles.userMessage}>1</span>
+               </div>
+               <div style={styles.chatMessage}>
+                 <span style={styles.botMessage}>
+                   ✅ Guia de GPS (INSS) emitida com sucesso!<br/>
+                   📊 Número: 2024001<br/>
+                   📧 PDF Guia GP (INSS) - clique para baixar<br/>
+                   💻 Disponível no seu dashboard
+                 </span>
+               </div>
+             </div>
+           </div>
+           <div style={styles.demoImage}>
+             <img
+               src={gps}
+               alt="WhatsApp no celular"
+@@ -296,51 +296,51 @@ const HomePage = () => {
+               <li>✅ Atendimento IA no WhatsApp</li>
+               <li>✅ Dashboard pessoal</li>
+               <li>✅ Suporte por email</li>
+               <li>✅ Conformidade LGPD</li>
+             </ul>
+             <Link to="/cadastro" style={styles.pricingButton}>Começar agora</Link>
+           </div>
+ 
+           <div style={styles.pricingCardPartner}>
+             
+             <div style={styles.pricingHeader}>
+               <h3 style={styles.pricingTitle}>Contabilidade Parceira</h3>
+               <div style={styles.pricingPrice}>
+                 <span style={styles.priceValue}>Comissões</span>
+                 <span style={styles.priceLabel}>Por cliente ativado</span>
+               </div>
+             </div>
+             <ul style={styles.pricingFeatures}>
+               <li>✅ Tudo do plano MEI Individual</li>
+               <li>✅ Dashboard de gestão de clientes</li>
+               <li>✅ Relatórios de comissões</li>
+               <li>✅ White label (sua marca)</li>
+               <li>✅ Suporte prioritário</li>
+               <li>✅ Material de divulgação</li>
+             </ul>
+-            <Link to="/cadastro" style={styles.pricingButtonPartner}>Ser parceiro</Link>
++            <Link to="/cadastro/parceiro" style={styles.pricingButtonPartner}>Ser parceiro</Link>
+           </div>
+         </div>
+       </section>
+ 
+       {/* Depoimentos */}
+       <section style={styles.testimonials}>
+         <div style={styles.sectionHeader}>
+           <h2 style={styles.sectionTitle}>MEIs que já simplificaram sua vida fiscal</h2>
+         </div>
+ 
+         <div style={styles.testimonialsGrid}>
+           <Testimonial
+             quote="Antes eu perdia horas tentando entender como emitir nota fiscal. Agora é só mandar uma mensagem no WhatsApp!"
+             author="Carlos Silva"
+             role="Eletricista Autônomo"
+             avatar={imgtes02}
+           />
+           <Testimonial
+             quote="Como contadora, ofereço o GuiasMei para meus clientes MEI. Eles adoram a praticidade e eu ganho comissão!"
+             author="Ana Oliveira"
+             role="Contadora Parceira"
+             avatar={imgtes01}
+           />
+           <Testimonial
+             quote="Emitir GPS nunca foi tão fácil. A IA calcula tudo certinho e eu só confirmo. Economizo tempo e evito erros."
+diff --git a/src/pages/LoginPage.jsx b/src/pages/LoginPage.jsx
+index 366f6e254bbd5990dbcd084aa772d75159b9630a..8c8dab61712246b44e1d51d123eb521a88865164 100644
+--- a/src/pages/LoginPage.jsx
++++ b/src/pages/LoginPage.jsx
+@@ -1,92 +1,97 @@
+ import React, { useState, useEffect } from 'react';
+ import { supabase } from '../supabase/client';
+ import { useNavigate, Link } from 'react-router-dom';
+ import logo from '../assets/logo.png';
+ 
+ const LoginPage = () => {
+-  const [phone, setPhone] = useState(''); // Changed from email to phone
++  const getInitialWidth = () => (typeof window !== 'undefined' ? window.innerWidth : 1024);
++
++  const [email, setEmail] = useState('');
+   const [password, setPassword] = useState('');
+   const [loading, setLoading] = useState(false);
+   const [error, setError] = useState('');
+-  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
++  const [screenWidth, setScreenWidth] = useState(getInitialWidth());
+   const navigate = useNavigate();
+ 
+   useEffect(() => {
+     const handleResize = () => {
+       setScreenWidth(window.innerWidth);
+     };
+ 
+     window.addEventListener('resize', handleResize);
+     return () => {
+       window.removeEventListener('resize', handleResize);
+     };
+   }, []);
+ 
+   const handleLogin = async (e) => {
+     e.preventDefault();
+     setLoading(true);
+     setError('');
+ 
+     try {
+-      // Using signInWithPassword with phone as identifier
+-      const { error } = await supabase.auth.signInWithPassword({ phone, password });
++      // Autentica o usuário utilizando o e-mail cadastrado
++      const { error } = await supabase.auth.signInWithPassword({
++        email: email.trim(),
++        password,
++      });
+       if (error) throw error;
+       navigate('/dashboard');
+     } catch (err) {
+       setError(err.message || 'Erro ao fazer login.');
+     } finally {
+       setLoading(false);
+     }
+   };
+ 
+   const imageSectionStyle = {
+     flex: 1,
+     display: screenWidth >= 768 ? 'block' : 'none',
+   };
+ 
+   return (
+     <div style={styles.pageContainer}>
+       
+       <div style={styles.formSection}>
+         
+         <div style={styles.formContainer}>
+           <div style={imageSectionStyle}>
+-        <img src={logo} alt="Rebelo App" style={styles.image} />
+-      </div>
++            <img src={logo} alt="GuiasMEI" style={styles.image} />
++          </div>
+           <h2 style={styles.title}>Bem-vindo de volta!</h2>
+           <p style={styles.subtitle}>Faça login para acessar seu painel.</p>
+ 
+           {error && <div style={styles.error}>{error}</div>}
+ 
+           <form onSubmit={handleLogin} style={styles.form}>
+             <div>
+-              <label style={styles.label}>Telefone</label> {/* Changed label to Telefone */}
++              <label style={styles.label}>E-mail</label>
+               <input
+-                type="tel" // Changed type to tel
+-                value={phone}
+-                onChange={(e) => setPhone(e.target.value)}
++                type="email"
++                value={email}
++                onChange={(e) => setEmail(e.target.value)}
+                 required
+                 style={styles.input}
+               />
+             </div>
+             <div>
+               <label style={styles.label}>Senha</label>
+               <input
+                 type="password"
+                 value={password}
+                 onChange={(e) => setPassword(e.target.value)}
+                 required
+                 style={styles.input}
+               />
+             </div>
+             <button type="submit" disabled={loading} style={styles.submitButton}>
+               {loading ? 'Entrando...' : 'Entrar'}
+             </button>
+           </form>
+           <p style={styles.signupText}>
+             Não tem uma conta? <Link to="/cadastro" style={styles.link}>Cadastre-se</Link>
+           </p>
+         </div>
+       </div>
+     </div>
+   );
+diff --git a/src/services/__tests__/integrations.test.js b/src/services/__tests__/integrations.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..82ba0c484db12653c2bf80432ee3099d17f454dc
+--- /dev/null
++++ b/src/services/__tests__/integrations.test.js
+@@ -0,0 +1,25 @@
++const ORIGINAL_ENV = { ...process.env };
++
++afterEach(() => {
++  process.env = { ...ORIGINAL_ENV };
++});
++
++afterAll(() => {
++  process.env = ORIGINAL_ENV;
++});
++
++describe('Integrações fiscais', () => {
++  test('emitirNfse exige configuração de base URL', async () => {
++    delete process.env.REACT_APP_EMISSOR_NACIONAL_BASE_URL;
++    const { emitirNfse } = await import('../integrations/emissorNacionalClient.js');
++
++    await expect(emitirNfse({})).rejects.toThrow('Emissor Nacional base URL não configurada');
++  });
++
++  test('gerarGuiaEsocial exige configuração de base URL', async () => {
++    delete process.env.REACT_APP_ESOCIAL_BASE_URL;
++    const { gerarGuiaEsocial } = await import('../integrations/esocialClient.js');
++
++    await expect(gerarGuiaEsocial({})).rejects.toThrow('Base URL do eSocial não configurada');
++  });
++});
+diff --git a/src/services/integrations/emissorNacionalClient.js b/src/services/integrations/emissorNacionalClient.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..c60cb2115d382e69e4f8a503a99cf2f34ca41d39
+--- /dev/null
++++ b/src/services/integrations/emissorNacionalClient.js
+@@ -0,0 +1,78 @@
++const normalizeBaseUrl = (baseUrl) => baseUrl.replace(/\/$/, '');
++
++const resolveConfig = () => {
++  const baseUrl = process.env.REACT_APP_EMISSOR_NACIONAL_BASE_URL;
++  if (!baseUrl) {
++    throw new Error('Emissor Nacional base URL não configurada. Defina REACT_APP_EMISSOR_NACIONAL_BASE_URL.');
++  }
++
++  return {
++    baseUrl: normalizeBaseUrl(baseUrl),
++    apiKey: process.env.REACT_APP_EMISSOR_NACIONAL_API_KEY,
++    certificateAlias: process.env.REACT_APP_EMISSOR_NACIONAL_CERT_ALIAS,
++    environment: process.env.REACT_APP_EMISSOR_NACIONAL_ENV || 'homologacao',
++  };
++};
++
++const buildHeaders = (config) => {
++  const headers = {
++    'Content-Type': 'application/json',
++    'X-Environment': config.environment,
++  };
++
++  if (config.apiKey) {
++    headers.Authorization = `Bearer ${config.apiKey}`;
++  }
++
++  if (config.certificateAlias) {
++    headers['X-Certificate-Alias'] = config.certificateAlias;
++  }
++
++  return headers;
++};
++
++const mapEmissionResponse = (payload) => ({
++  nfseKey: payload?.nfseKey || payload?.chaveAcesso || payload?.numeroNota || null,
++  protocol: payload?.protocol || payload?.protocolo || payload?.numeroProtocolo || null,
++  status: payload?.status || payload?.situacao || 'issued',
++  pdfUrl:
++    payload?.pdfUrl || payload?.danfeUrl || payload?.links?.pdf || payload?.documento?.danfeUrl || null,
++  issuedAt: payload?.issuedAt || payload?.dataEmissao || payload?.data || null,
++  raw: payload,
++});
++
++export const emitirNfse = async (emissionRequest) => {
++  const config = resolveConfig();
++  const response = await fetch(`${normalizeBaseUrl(config.baseUrl)}/nfse`, {
++    method: 'POST',
++    headers: buildHeaders(config),
++    body: JSON.stringify(emissionRequest),
++  });
++
++  if (!response.ok) {
++    throw new Error(`Falha ao comunicar com o Emissor Nacional (status ${response.status}).`);
++  }
++
++  const payload = await response.json();
++  return mapEmissionResponse(payload);
++};
++
++export const consultarNfse = async (nfseKey) => {
++  const config = resolveConfig();
++  const response = await fetch(`${normalizeBaseUrl(config.baseUrl)}/nfse/${encodeURIComponent(nfseKey)}`, {
++    method: 'GET',
++    headers: buildHeaders(config),
++  });
++
++  if (!response.ok) {
++    throw new Error(`Falha ao consultar NFS-e (status ${response.status}).`);
++  }
++
++  const payload = await response.json();
++  return mapEmissionResponse(payload);
++};
++
++export default {
++  emitirNfse,
++  consultarNfse,
++};
+diff --git a/src/services/integrations/esocialClient.js b/src/services/integrations/esocialClient.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..4efe56cd0d895ce50b70f51313a1f2a8bd5755f5
+--- /dev/null
++++ b/src/services/integrations/esocialClient.js
+@@ -0,0 +1,71 @@
++const normalizeBaseUrl = (baseUrl) => baseUrl.replace(/\/$/, '');
++
++const resolveConfig = () => {
++  const baseUrl = process.env.REACT_APP_ESOCIAL_BASE_URL;
++  if (!baseUrl) {
++    throw new Error('Base URL do eSocial não configurada. Defina REACT_APP_ESOCIAL_BASE_URL.');
++  }
++
++  return {
++    baseUrl: normalizeBaseUrl(baseUrl),
++    apiKey: process.env.REACT_APP_ESOCIAL_API_KEY,
++    environment: process.env.REACT_APP_ESOCIAL_ENV || 'homologacao',
++  };
++};
++
++const buildHeaders = (config) => {
++  const headers = {
++    'Content-Type': 'application/json',
++    'X-Environment': config.environment,
++  };
++
++  if (config.apiKey) {
++    headers.Authorization = `Bearer ${config.apiKey}`;
++  }
++
++  return headers;
++};
++
++const mapGuideResponse = (payload) => ({
++  guideId: payload?.guideId || payload?.id || payload?.numeroGuia || null,
++  barcode: payload?.barcode || payload?.codigoBarras || payload?.linhaDigitavel || null,
++  status: payload?.status || payload?.situacao || 'issued',
++  pdfUrl: payload?.pdfUrl || payload?.linkPdf || payload?.documento?.pdfUrl || null,
++  raw: payload,
++});
++
++export const gerarGuiaEsocial = async (guideRequest) => {
++  const config = resolveConfig();
++  const response = await fetch(`${normalizeBaseUrl(config.baseUrl)}/gps`, {
++    method: 'POST',
++    headers: buildHeaders(config),
++    body: JSON.stringify(guideRequest),
++  });
++
++  if (!response.ok) {
++    throw new Error(`Falha ao gerar guia no eSocial (status ${response.status}).`);
++  }
++
++  const payload = await response.json();
++  return mapGuideResponse(payload);
++};
++
++export const consultarGuiaEsocial = async (guideId) => {
++  const config = resolveConfig();
++  const response = await fetch(`${normalizeBaseUrl(config.baseUrl)}/gps/${encodeURIComponent(guideId)}`, {
++    method: 'GET',
++    headers: buildHeaders(config),
++  });
++
++  if (!response.ok) {
++    throw new Error(`Falha ao consultar guia no eSocial (status ${response.status}).`);
++  }
++
++  const payload = await response.json();
++  return mapGuideResponse(payload);
++};
++
++export default {
++  gerarGuiaEsocial,
++  consultarGuiaEsocial,
++};
+diff --git a/src/utils/__tests__/validators.test.js b/src/utils/__tests__/validators.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..5edc663d46e2172ea187e20095ed6c1051a7981c
+--- /dev/null
++++ b/src/utils/__tests__/validators.test.js
+@@ -0,0 +1,46 @@
++import { validateCPF, validateCNPJ } from "../validators";
++
++describe("validateCPF", () => {
++  it("accepts a valid CPF with punctuation", () => {
++    expect(validateCPF("529.982.247-25")).toBe(true);
++  });
++
++  it("accepts a valid CPF with espaços", () => {
++    expect(validateCPF("529 982 247 25")).toBe(true);
++  });
++
++  it("rejects CPFs with repeated digits", () => {
++    expect(validateCPF("111.111.111-11")).toBe(false);
++  });
++
++  it("rejects CPFs with incorrect check digits", () => {
++    expect(validateCPF("52998224724")).toBe(false);
++  });
++
++  it("rejects CPFs with comprimento incorreto", () => {
++    expect(validateCPF("5299822472")).toBe(false);
++  });
++});
++
++describe("validateCNPJ", () => {
++  it("accepts a valid CNPJ with punctuation", () => {
++    expect(validateCNPJ("04.252.011/0001-10")).toBe(true);
++  });
++
++  it("accepts a valid CNPJ with espaços", () => {
++    expect(validateCNPJ("04 252 011 0001 10")).toBe(true);
++  });
++
++  it("rejects CNPJs with repeated digits", () => {
++    expect(validateCNPJ("11.111.111/1111-11")).toBe(false);
++  });
++
++  it("rejects CNPJs with incorrect check digits", () => {
++    expect(validateCNPJ("04.252.011/0001-00")).toBe(false);
++  });
++
++  it("rejects CNPJs com tamanho inválido", () => {
++    expect(validateCNPJ("04.252.011/0001"))
++      .toBe(false);
++  });
++});
+diff --git a/supabase/migrations/20250214000010_extend_emissions_and_partners.sql b/supabase/migrations/20250214000010_extend_emissions_and_partners.sql
+new file mode 100644
+index 0000000000000000000000000000000000000000..e8566ded5fa770b2aa8709514673a425b7ef7fe7
+--- /dev/null
++++ b/supabase/migrations/20250214000010_extend_emissions_and_partners.sql
+@@ -0,0 +1,135 @@
++-- Extend profiles with contact metadata
++ALTER TABLE public.profiles
++    ADD COLUMN IF NOT EXISTS contact_email TEXT,
++    ADD COLUMN IF NOT EXISTS phone TEXT,
++    ADD COLUMN IF NOT EXISTS digital_certificate_status TEXT DEFAULT 'pending';
++
++-- NFS-e emissions table
++CREATE TABLE IF NOT EXISTS public.nfse_emissions (
++    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
++    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
++    value NUMERIC(12,2) NOT NULL,
++    service_description TEXT NOT NULL,
++    issued_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
++    nfse_key TEXT,
++    status TEXT DEFAULT 'pending',
++    tomador JSONB,
++    pdf_url TEXT,
++    protocol TEXT,
++    integration_mode TEXT DEFAULT 'production',
++    raw_response JSONB,
++    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
++);
++
++ALTER TABLE public.nfse_emissions ENABLE ROW LEVEL SECURITY;
++
++CREATE POLICY IF NOT EXISTS "Users can view own nfse emissions" ON public.nfse_emissions
++    FOR SELECT USING (auth.uid() = user_id);
++
++CREATE POLICY IF NOT EXISTS "Users can insert own nfse emissions" ON public.nfse_emissions
++    FOR INSERT WITH CHECK (auth.uid() = user_id);
++
++-- GPS emissions table
++CREATE TABLE IF NOT EXISTS public.gps_emissions (
++    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
++    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
++    value NUMERIC(12,2) NOT NULL,
++    month_ref TEXT NOT NULL,
++    barcode TEXT,
++    pdf_url TEXT,
++    status TEXT DEFAULT 'pending',
++    inss_code TEXT,
++    guide_id TEXT,
++    integration_mode TEXT DEFAULT 'production',
++    raw_response JSONB,
++    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
++);
++
++ALTER TABLE public.gps_emissions ENABLE ROW LEVEL SECURITY;
++
++CREATE POLICY IF NOT EXISTS "Users can view own gps emissions" ON public.gps_emissions
++    FOR SELECT USING (auth.uid() = user_id);
++
++CREATE POLICY IF NOT EXISTS "Users can insert own gps emissions" ON public.gps_emissions
++    FOR INSERT WITH CHECK (auth.uid() = user_id);
++
++-- Partners registry
++CREATE TABLE IF NOT EXISTS public.partners (
++    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
++    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
++    company_name TEXT NOT NULL,
++    document TEXT,
++    contact_email TEXT,
++    contact_phone TEXT,
++    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
++);
++
++ALTER TABLE public.partners ENABLE ROW LEVEL SECURITY;
++
++CREATE POLICY IF NOT EXISTS "Partner can view own record" ON public.partners
++    FOR SELECT USING (auth.uid() = user_id);
++
++CREATE POLICY IF NOT EXISTS "Partner can insert own record" ON public.partners
++    FOR INSERT WITH CHECK (auth.uid() = user_id);
++
++-- Partner client linkage
++CREATE TABLE IF NOT EXISTS public.partner_clients (
++    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
++    partner_id UUID REFERENCES public.partners(id) ON DELETE CASCADE,
++    client_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
++    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
++);
++
++ALTER TABLE public.partner_clients ENABLE ROW LEVEL SECURITY;
++
++CREATE POLICY IF NOT EXISTS "Partners can view own clients" ON public.partner_clients
++    FOR SELECT USING (
++        auth.uid() IN (
++            SELECT user_id FROM public.partners WHERE id = partner_id
++        )
++    );
++
++CREATE POLICY IF NOT EXISTS "Partners can insert own clients" ON public.partner_clients
++    FOR INSERT WITH CHECK (
++        auth.uid() IN (
++            SELECT user_id FROM public.partners WHERE id = partner_id
++        )
++    );
++
++-- Digital certificates storage metadata
++CREATE TABLE IF NOT EXISTS public.digital_certificates (
++    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
++    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
++    storage_path TEXT NOT NULL,
++    status TEXT DEFAULT 'pending',
++    expires_at TIMESTAMP WITH TIME ZONE,
++    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
++    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
++);
++
++ALTER TABLE public.digital_certificates ENABLE ROW LEVEL SECURITY;
++
++CREATE POLICY IF NOT EXISTS "Users can view own certificates" ON public.digital_certificates
++    FOR SELECT USING (auth.uid() = user_id);
++
++CREATE POLICY IF NOT EXISTS "Users can manage own certificates" ON public.digital_certificates
++    FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
++
++-- eSocial task tracking
++CREATE TABLE IF NOT EXISTS public.esocial_tasks (
++    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
++    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
++    task_type TEXT NOT NULL,
++    payload JSONB,
++    status TEXT DEFAULT 'pending',
++    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
++    processed_at TIMESTAMP WITH TIME ZONE
++);
++
++ALTER TABLE public.esocial_tasks ENABLE ROW LEVEL SECURITY;
++
++CREATE POLICY IF NOT EXISTS "Users can view own esocial tasks" ON public.esocial_tasks
++    FOR SELECT USING (auth.uid() = user_id);
++
++CREATE POLICY IF NOT EXISTS "Users can insert own esocial tasks" ON public.esocial_tasks
++    FOR INSERT WITH CHECK (auth.uid() = user_id);

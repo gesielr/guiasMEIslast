@@ -1,67 +1,65 @@
-// whatsapp-sim/server.js
+// telegram-bot/server.js
 const express = require('express');
-const { Client, LocalAuth } = require('whatsapp-web.js');
-const qrcode = require('qrcode-terminal');
-const path = require('path');
-const session = require('express-session');
+const TelegramBot = require('node-telegram-bot-api');
+require('dotenv').config(); // Para carregar variáveis de ambiente do arquivo .env
 
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
+
+// --- Configuração do Bot do Telegram ---
+// Substitua pelo token do seu bot ou coloque em um arquivo .env
+const token = process.env.TELEGRAM_BOT_TOKEN || 'SEU_TOKEN_AQUI';
+
+// Criando o bot. 'polling' é usado para desenvolvimento. Em produção, usaríamos webhooks.
+const bot = new TelegramBot(token, { polling: true });
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(session({
-  secret: 'rebelo-whatsapp-secret',
-  resave: false,
-  saveUninitialized: true
-}));
 
-// Servir frontend temporário para exibir QR Code
-app.use(express.static(path.join(__dirname, 'public')));
+console.log('🤖 Bot do Telegram iniciado e aguardando mensagens...');
 
-// Iniciar cliente WhatsApp
-const client = new Client({
-  authStrategy: new LocalAuth({ clientId: "rebelo-app" }),
-  puppeteer: {
-    headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox']
+// Listener para o comando /start, que é enviado quando o usuário inicia a conversa.
+// O link no frontend será t.me/seu_bot?start=USER_ID
+bot.onText(/\/start (.+)/, async (msg, match) => {
+  const chatId = msg.chat.id;
+  const userId = match[1]; // Captura o ID do usuário do comando start
+
+  console.log(`[IA] Iniciando onboarding para usuário: ${userId} | Chat ID: ${chatId}`);
+
+  // Simula fluxo da IA
+  const welcomeMessage = `🤖 Olá! Sou a assistente virtual da Rebelo. Vi que você se cadastrou com o ID: ${userId}.\n\nVamos começar?`;
+  await bot.sendMessage(chatId, welcomeMessage);
+
+  // Simula a coleta de dados da categoria (Pessoa Física)
+  const categoryMessage = `Para gerar suas guias de INSS, preciso saber em qual categoria você se encaixa. Por favor, escolha uma:`;
+  await bot.sendMessage(chatId, categoryMessage, {
+    reply_markup: {
+      inline_keyboard: [
+        [{ text: 'Autônomo', callback_data: 'category_autonomo' }],
+        [{ text: 'Empregador Doméstico', callback_data: 'category_domestico' }],
+        [{ text: 'Pró-labore', callback_data: 'category_prolabore' }]
+      ]
+    }
+  });
+});
+
+// Listener para os botões inline
+bot.on('callback_query', async (callbackQuery) => {
+  const msg = callbackQuery.message;
+  const chatId = msg.chat.id;
+  const data = callbackQuery.data; // ex: 'category_autonomo'
+
+  if (data.startsWith('category_')) {
+    const category = data.split('_')[1];
+    await bot.sendMessage(chatId, `Ótimo! Você selecionou: ${category}.\n\nAgora, para ativar sua conta, basta pagar a taxa de adesão única de R$120,00 neste link seguro: https://rebelo.app/pagar/USER_ID_AQUI`);
+    // Aqui você chamaria uma API para salvar a categoria no perfil do usuário no Supabase.
   }
 });
-
-client.on('qr', (qr) => {
-  console.log('QR CODE para escanear no WhatsApp:');
-  qrcode.generate(qr, { small: true });
-});
-
-client.on('ready', () => {
-  console.log('✅ WhatsApp Web conectado!');
-});
-
-client.on('message', async msg => {
-  const text = msg.body.trim();
-  const from = msg.from;
-
-  // Verifica se a mensagem contém o ID do usuário (ex: "Olá! Sou novo usuário. Meu ID é: UUID")
-  if (text.includes('Meu ID é:')) {
-    const userId = text.split('Meu ID é:')[1].trim();
-
-    // Simula fluxo da IA
-    await msg.reply(`🤖 Olá! Sou a IA da Rebelo. Vamos começar seu cadastro!\n\n1. Leia e aceite nosso contrato: https://rebelo.app/contrato-${userId}.pdf\n2. Pague sua adesão de R$120,00: https://rebelo.app/pagar/${userId}\n\nApós o pagamento, te ajudarei a emitir sua primeira nota fiscal!`);
-
-    // Aqui você poderia chamar uma API para atualizar o status do usuário no Supabase
-    // Usando a variável 'from' no log
-    console.log(`[IA] Iniciando onboarding para usuário: ${userId} | WhatsApp: ${from}`);
-  }
-});
-
-client.initialize();
 
 // Rota para verificar status
 app.get('/status', (req, res) => {
-  res.json({ status: client.info ? 'connected' : 'disconnected' });
+  res.json({ status: 'running', bot: 'Telegram' });
 });
 
 app.listen(PORT, () => {
-  console.log(`🚀 Servidor de simulação WhatsApp rodando em http://localhost:${PORT}`);
-  console.log(`📱 Acesse http://localhost:${PORT}/ para ver o QR Code`);
+  console.log(`🚀 Servidor do Bot do Telegram rodando em http://localhost:${PORT}`);
 });

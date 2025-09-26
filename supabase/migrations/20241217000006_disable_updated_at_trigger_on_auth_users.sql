@@ -1,0 +1,1 @@
+ALTER TABLE auth.users DISABLE TRIGGER handle_updated_at_auth_users;

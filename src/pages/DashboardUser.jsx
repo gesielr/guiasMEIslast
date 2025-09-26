@@ -1,32 +1,25 @@
 // src/pages/DashboardUser.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { decryptData } from '../utils/encryption';
+import logo from '../assets/logo.png';
 
 const DashboardUser = () => {
-  const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchUserData();
-  }, []);
-
-  const fetchUserData = async () => {
+  const fetchUserData = useCallback(async () => {
     try {
-      // 1. Pegar usuário autenticado
       const { data: { user: authUser } } = await supabase.auth.getUser();
       if (!authUser) {
-        navigate('/cadastro');
+        navigate('/login'); // Redirect to login instead of cadastro
         return;
       }
-      setUser(authUser);
 
-      // 2. Buscar perfil
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select('*')
@@ -34,23 +27,17 @@ const DashboardUser = () => {
         .single();
 
       if (profileError) throw profileError;
-      setProfile(profileData);
 
-      if (user.user_metadata?.user_type === 'partner') {
+      if (profileData.user_type === 'partner') {
         navigate('/dashboard-parceiro');
         return;
-        }
+      }
 
-        const decryptedDocument = profile.document ? await decryptData(profile.document) : '';
-        const decryptedPis = profile.pis ? await decryptData(profile.pis) : '';
+      const decryptedDocument = profileData.document ? await decryptData(profileData.document) : '';
+      const decryptedPis = profileData.pis ? await decryptData(profileData.pis) : '';
 
-        setProfile({
-          ...profile,
-          document: decryptedDocument,
-          pis: decryptedPis,
-        });
+      setProfile({ ...profileData, document: decryptedDocument, pis: decryptedPis });
 
-      // 3. Buscar pagamentos
       const { data: paymentsData, error: paymentsError } = await supabase
         .from('payments')
         .select('*')
@@ -65,217 +52,273 @@ const DashboardUser = () => {
       setError('Erro ao carregar dados: ' + err.message);
       setLoading(false);
     }
-  };
+  }, [navigate]);
 
-    // Dentro de DashboardUser.jsx, após o useEffect de fetchUserData
+  useEffect(() => {
+    fetchUserData();
+  }, [fetchUserData]);
 
-    useEffect(() => {
+  useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const sessionId = urlParams.get('session_id');
 
     if (sessionId) {
-        // Limpar URL para não mostrar parâmetros
-        window.history.replaceState({}, document.title, "/dashboard");
-
-        // Mostrar mensagem de sucesso
-        alert('🎉 Pagamento confirmado! Seu acesso está liberado.');
+      window.history.replaceState({}, document.title, "/dashboard");
+      // Replace alert with a more modern notification system if available
+      alert('🎉 Pagamento confirmado! Seu acesso está liberado.');
     }
-    }, []);
+  }, []);
 
-  const handleEmitNFS = () => {
-    if (!profile.onboarding_completed) {
-      alert('Complete o onboarding primeiro!');
-      return;
-    }
-    navigate('/emitir-nota');
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate('/');
   };
 
-  const handleEmitGPS = () => {
-    if (!profile.onboarding_completed) {
-      alert('Complete o onboarding primeiro!');
-      return;
-    }
-    navigate('/emitir-gps');
-  };
+  const handleEmitNFS = () => navigate('/emitir-nota');
+  const handleEmitGPS = () => navigate('/emitir-gps');
 
   if (loading) {
-    return (
-      <div style={styles.container}>
-        <h2>Carregando seu dashboard...</h2>
-        <div style={styles.spinner}>🔄</div>
-      </div>
-    );
+    return <div style={styles.centered}><div style={styles.spinner}></div></div>;
   }
 
   if (error) {
-    return (
-      <div style={styles.container}>
-        <h2>❌ Erro</h2>
-        <p>{error}</p>
-        <button onClick={() => navigate('/')} style={styles.button}>
-          Voltar para Home
-        </button>
-      </div>
-    );
+    return <div style={styles.centered}><p>{error}</p></div>;
   }
 
   return (
-    <div style={styles.container}>
-      <header style={styles.header}>
-        <h1>Olá, {profile.name}!</h1>
-        <p>Seu documento: {profile.document}</p>
-      </header>
+    <div style={styles.dashboardContainer}>
+      <aside style={styles.sidebar}>
+        <img src={logo} alt="Rebelo App Logo" style={styles.logo} />
+        <nav style={styles.nav}>
+          <button style={{...styles.navLink, ...styles.activeNavLink}}><span>🏠</span> Dashboard</button>
+          <button style={styles.navLink} onClick={handleEmitNFS}><span>📄</span> Emitir NFS-e</button>
+          <button style={styles.navLink} onClick={handleEmitGPS}><span>💰</span> Emitir Guia GPS</button>
+          <button style={styles.navLink}><span>👤</span> Meu Perfil</button>
+        </nav>
+        <div style={styles.logoutButton} onClick={handleLogout}>
+          <span>🚪</span> Sair
+        </div>
+      </aside>
 
-      {/* Status do Onboarding */}
-      <div style={styles.statusCard}>
-        <h3>Status do Cadastro</h3>
-        <p>
-          <strong>Contrato aceito:</strong>{' '}
-          {profile.contract_accepted ? '✅ Sim' : '❌ Não'}
-        </p>
-        <p>
-          <strong>Onboarding completo:</strong>{' '}
-          {profile.onboarding_completed ? '✅ Sim' : '❌ Não'}
-        </p>
-        {profile.user_type === 'mei' && (
-          <p>
-            <strong>Certificado Digital:</strong>{' '}
-            {profile.digital_certificate_status === 'issued'
-              ? '✅ Emitido'
-              : profile.digital_certificate_status === 'scheduled'
-              ? '📅 Agendado'
-              : '⏳ Pendente'}
-          </p>
+      <main style={styles.mainContent}>
+        <header style={styles.header}>
+          <h2>Olá, {profile.name}!</h2>
+          <p>Bem-vindo(a) de volta ao seu painel de controle fiscal.</p>
+        </header>
+
+        {!profile.onboarding_completed && (
+            <div style={styles.onboardingAlert}>
+                <strong>Atenção:</strong> Seu cadastro ainda não foi finalizado pela nossa equipe. Algumas funcionalidades podem estar limitadas.
+            </div>
         )}
-      </div>
 
-      {/* Ações Rápidas */}
-      <div style={styles.actions}>
-        <button onClick={handleEmitNFS} style={styles.actionButton} disabled={!profile.onboarding_completed}>
-          📄 Emitir Nota Fiscal de Serviço
-        </button>
-        <button onClick={handleEmitGPS} style={styles.actionButton} disabled={!profile.onboarding_completed}>
-          💰 Emitir Guia de INSS (GPS)
-        </button>
-      </div>
+        <section style={styles.cardsContainer}>
+            <div style={{...styles.card, ...styles.actionsCard}}>
+                <h3>Ações Rápidas</h3>
+                <button onClick={handleEmitNFS} style={styles.actionButton} disabled={!profile.onboarding_completed}>
+                    Emitir Nota Fiscal de Serviço
+                </button>
+                <button onClick={handleEmitGPS} style={styles.actionButton} disabled={!profile.onboarding_completed}>
+                    Emitir Guia de INSS (GPS)
+                </button>
+            </div>
+            <div style={styles.card}>
+                <h3>Status do Cadastro</h3>
+                <div style={styles.statusGrid}>
+                    <p><strong>Contrato aceito:</strong> {profile.contract_accepted ? '✅ Sim' : '❌ Não'}</p>
+                    <p><strong>Onboarding:</strong> {profile.onboarding_completed ? '✅ Completo' : '⏳ Pendente'}</p>
+                    {profile.user_type === 'mei' && (
+                        <p><strong>Certificado Digital:</strong> {profile.digital_certificate_status || 'Pendente'}</p>
+                    )}
+                </div>
+            </div>
+        </section>
 
-      {/* Histórico de Pagamentos */}
-      <div style={styles.section}>
-        <h3>Histórico de Pagamentos</h3>
-        {payments.length === 0 ? (
-          <p>Você ainda não realizou pagamentos.</p>
-        ) : (
-          <table style={styles.table}>
-            <thead>
-              <tr>
-                <th>Tipo</th>
-                <th>Valor</th>
-                <th>Status</th>
-                <th>Data</th>
-              </tr>
-            </thead>
-            <tbody>
-              {payments.map((payment) => (
-                <tr key={payment.id}>
-                  <td>{payment.type === 'onboarding' ? 'Adesão' : payment.type.toUpperCase()}</td>
-                  <td>R$ {payment.amount.toFixed(2)}</td>
-                  <td>
-                    {payment.status === 'paid' ? '✅ Pago' : payment.status === 'failed' ? '❌ Falhou' : '⏳ Pendente'}
-                  </td>
-                  <td>{new Date(payment.created_at).toLocaleDateString('pt-BR')}</td>
+        <section style={{...styles.card, ...styles.tableCard}}>
+          <h3>Histórico de Pagamentos</h3>
+          {payments.length === 0 ? (
+            <p>Nenhum pagamento encontrado.</p>
+          ) : (
+            <table style={styles.table}>
+              <thead>
+                <tr>
+                  <th style={styles.th}>Tipo</th>
+                  <th style={styles.th}>Valor</th>
+                  <th style={styles.th}>Status</th>
+                  <th style={styles.th}>Data</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
-
-      {/* Logout */}
-      <button
-        onClick={async () => {
-          await supabase.auth.signOut();
-          navigate('/');
-        }}
-        style={styles.logoutButton}
-      >
-        Sair
-      </button>
+              </thead>
+              <tbody>
+                {payments.map((payment) => (
+                  <tr key={payment.id}>
+                    <td style={styles.td}>{payment.type === 'onboarding' ? 'Adesão' : payment.type}</td>
+                    <td style={styles.td}>R$ {payment.amount.toFixed(2)}</td>
+                    <td style={styles.td}><span style={styles.statusBadge(payment.status)}>{payment.status}</span></td>
+                    <td style={styles.td}>{new Date(payment.created_at).toLocaleDateString('pt-BR')}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </section>
+      </main>
     </div>
   );
 };
 
 const styles = {
-  container: {
-    maxWidth: '900px',
-    margin: '40px auto',
-    padding: '20px',
-    fontFamily: 'Arial, sans-serif',
+  // Main Layout
+  dashboardContainer: {
+    display: 'flex',
+    minHeight: '100vh',
+    fontFamily: '"Inter", sans-serif',
+    backgroundColor: '#f8f9fa',
+  },
+  sidebar: {
+    width: '250px',
+    backgroundColor: '#fff',
+    padding: '30px 20px',
+    display: 'flex',
+    flexDirection: 'column',
+    borderRight: '1px solid #dee2e6',
+  },
+  logo: {
+    height: '50px',
+    marginBottom: '40px',
+    alignSelf: 'center',
+  },
+  nav: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '10px',
+    flexGrow: 1,
+  },
+  navLink: {
+    textDecoration: 'none',
+    color: '#495057',
+    padding: '12px 15px',
+    borderRadius: '8px',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+    fontWeight: 500,
+    transition: 'background-color 0.2s, color 0.2s',
+    background: 'none',
+    border: 'none',
+    cursor: 'pointer',
+    textAlign: 'left',
+  },
+  activeNavLink: {
+    backgroundColor: '#e9ecef',
+    color: '#007bff',
+  },
+  logoutButton: {
+    padding: '12px 15px',
+    borderRadius: '8px',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+    fontWeight: 500,
+    color: '#dc3545',
+    cursor: 'pointer',
+    transition: 'background-color 0.2s',
+  },
+  mainContent: {
+    flex: 1,
+    padding: '40px',
+    overflowY: 'auto',
   },
   header: {
-    textAlign: 'center',
-    marginBottom: '30px',
-    padding: '20px',
-    backgroundColor: '#f8f9fa',
-    borderRadius: '8px',
-  },
-  statusCard: {
-    backgroundColor: '#fff',
-    padding: '20px',
-    borderRadius: '8px',
-    boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
-    marginBottom: '30px',
-  },
-  actions: {
-    display: 'flex',
-    gap: '20px',
-    justifyContent: 'center',
     marginBottom: '40px',
-    flexWrap: 'wrap',
+  },
+  onboardingAlert: {
+    backgroundColor: '#fff3cd',
+    color: '#664d03',
+    padding: '15px',
+    borderRadius: '8px',
+    marginBottom: '30px',
+  },
+  // Cards
+  cardsContainer: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+    gap: '30px',
+    marginBottom: '30px',
+  },
+  card: {
+    backgroundColor: '#fff',
+    padding: '30px',
+    borderRadius: '12px',
+    boxShadow: '0 4px 20px rgba(0,0,0,0.05)',
+  },
+  actionsCard: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '15px',
   },
   actionButton: {
-    padding: '15px 30px',
+    padding: '15px',
     fontSize: '16px',
+    fontWeight: 'bold',
     backgroundColor: '#007bff',
     color: 'white',
     border: 'none',
-    borderRadius: '6px',
-    cursor: 'pointer',
-    minWidth: '250px',
-  },
-  section: {
-    backgroundColor: '#fff',
-    padding: '20px',
     borderRadius: '8px',
-    boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
-    marginBottom: '30px',
+    cursor: 'pointer',
+    textAlign: 'center',
+    transition: 'background-color 0.2s',
+  },
+  statusGrid: {
+    display: 'grid',
+    gap: '10px',
+  },
+  // Table
+  tableCard: {
+    padding: 0,
   },
   table: {
     width: '100%',
     borderCollapse: 'collapse',
-    marginTop: '10px',
   },
-  tableHeader: {
+  th: {
+    textAlign: 'left',
+    padding: '15px 30px',
     backgroundColor: '#f8f9fa',
+    fontWeight: '600',
+    color: '#6c757d',
+    borderBottom: '1px solid #dee2e6',
   },
-  tableCell: {
-    padding: '10px',
-    border: '1px solid #dee2e6',
-    textAlign: 'center',
+  td: {
+    padding: '15px 30px',
+    borderBottom: '1px solid #dee2e6',
+    color: '#495057',
   },
-  logoutButton: {
-    display: 'block',
-    margin: '40px auto 0',
-    padding: '10px 20px',
-    backgroundColor: '#dc3545',
-    color: 'white',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
+  statusBadge: (status) => ({
+    padding: '5px 10px',
+    borderRadius: '12px',
+    fontSize: '12px',
+    fontWeight: 'bold',
+    backgroundColor: status === 'paid' ? '#d1e7dd' : status === 'failed' ? '#f8d7da' : '#fff3cd',
+    color: status === 'paid' ? '#0f5132' : status === 'failed' ? '#842029' : '#664d03',
+  }),
+  // Utils
+  centered: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: '100vh',
   },
   spinner: {
-    textAlign: 'center',
-    fontSize: '24px',
-    margin: '40px 0',
+    border: '4px solid #f3f3f3',
+    borderTop: '4px solid #007bff',
+    borderRadius: '50%',
+    width: '40px',
+    height: '40px',
+    animation: 'spin 1s linear infinite',
+  },
+  '@keyframes spin': {
+    '0%': { transform: 'rotate(0deg)' },
+    '100%': { transform: 'rotate(360deg)' },
   },
 };
 

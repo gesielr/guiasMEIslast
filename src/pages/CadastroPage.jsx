@@ -42,6 +42,21 @@ const CadastroPage = () => {
       Cadastro para contribuintes individuais
     </span>
   </Link>
+
+  <Link to="/cadastro/parceiro" style={styles.selectionButton}>
+    <span style={{ ...styles.buttonIcon, marginRight: '12px' }}>🤝</span>
+    <span style={{
+      ...styles.buttonText,
+      textTransform: 'uppercase',
+      color: '#28a745',
+      marginRight: '8px',
+    }}>
+      Sou Parceiro
+    </span>
+    <span style={styles.buttonSubtext}>
+      Cadastro para contabilidades parceiras
+    </span>
+  </Link>
 </div>
 
         <div style={styles.backLinkContainer}>

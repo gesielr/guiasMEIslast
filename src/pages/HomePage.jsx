@@ -318,7 +318,7 @@ const HomePage = () => {
               <li>✅ Suporte prioritário</li>
               <li>✅ Material de divulgação</li>
             </ul>
-            <Link to="/cadastro" style={styles.pricingButtonPartner}>Ser parceiro</Link>
+            <Link to="/cadastro/parceiro" style={styles.pricingButtonPartner}>Ser parceiro</Link>
           </div>
         </div>
       </section>
@@ -389,7 +389,7 @@ const HomePage = () => {
             Cadastre-se agora e comece a emitir suas notas ou sua guia de GPS (INSS) pelo WhatsApp em poucos minutos.
           </p>
           <div style={styles.finalCtaActions}>
-            <Link to="/cadastro" style={styles.ctaPrimary}>Cadastre-se</Link>
+            <Link to="/cadastro/parceiro" style={styles.ctaPrimary}>Cadastre-se</Link>
             <a href="https://wa.me/5511999999999" style={styles.whatsappButton} target="_blank" rel="noopener noreferrer">
               💬 Falar no WhatsApp
             </a>

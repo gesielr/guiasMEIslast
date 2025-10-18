@@ -1,223 +1,174 @@
-Claro! Abaixo está o **arquivo `README.md` completo** para seu projeto **Rebelo App**, pronto para ser colocado na raiz do repositório. Ele inclui:
 
-✅ Descrição do projeto  
-✅ Tecnologias utilizadas  
-✅ Estrutura de pastas  
-✅ Instruções de instalação e configuração local  
-✅ Como executar (frontend, backend, WhatsApp sim)  
-✅ Variáveis de ambiente  
-✅ Fluxo do usuário  
-✅ Licença
+# Guias MEI — README
 
----
+Aplicação web React + funções Supabase para emissão/gestão de guias (GPS) e notas (simuladas), com integração local de WhatsApp (simulador) e Stripe para pagamentos.
 
-# 📄 **README.md — Rebelo App**
+Este README foi atualizado para documentar todas as funcionalidades, como rodar localmente (Windows PowerShell), scripts úteis e variáveis de ambiente necessárias.
 
-> **Plataforma Web + WhatsApp para Gestão Fiscal Automatizada de MEIs e Autônomos**
+## Status
 
-O **Rebelo App** é uma plataforma que automatiza a gestão fiscal de Microempreendedores Individuais (MEIs) e autônomos, permitindo a emissão de notas fiscais de serviço (NFS-e) e guias de INSS (GPS) via atendimento guiado por IA no WhatsApp. O sistema opera com dois modelos de usuário: **usuário comum** e **parceiro** (contabilidades revendedoras).
+- Frontend (React) pronto em modo dev (Create React App).
+- Simulador de WhatsApp disponível na pasta `whatsapp-sim`.
+- Funções do Supabase em `supabase/functions` (Edge Functions).
+- Integração de pagamentos via Stripe (modo teste).
 
----
+## Funcionalidades (resumido)
 
-## 🚀 **Funcionalidades Principais**
+- Cadastro de usuário (MEI / Autônomo)
+- Busca de CNPJ/CPF via função (fetch-cnpj)
+- Pagamento de adesão via Stripe (fluxo de checkout criado nas Edge Functions)
+- Emissão simulada de Nota Fiscal de Serviço (NFS-e)
+- Emissão simulada de Guia de Previdência Social (GPS)
+- Dashboards:
+    - Usuário (`/dashboard`)
+    - Parceiro (`/dashboard-parceiro`)
+    - Admin (`/admin`)
+- Onboarding/atendimento via WhatsApp (simulador local)
+- Criptografia de dados sensíveis (AES-GCM) antes de salvar no banco
+- Regras de segurança (RLS) e uso de Supabase Auth
 
-- ✅ Cadastro de MEI (com busca automática na Receita Federal) e Autônomo
-- ✅ Onboarding guiado por IA via WhatsApp
-- ✅ Pagamento de adesão via Stripe (R$120,00)
-- ✅ Emissão simulada de Nota Fiscal de Serviço (NFS-e)
-- ✅ Emissão simulada de Guia de Previdência Social (GPS)
-- ✅ Dashboard do Usuário com histórico e status
-- ✅ Dashboard do Parceiro (contabilidade) com gestão de clientes e comissões
-- ✅ Dashboard Administrativo com relatórios e métricas
-- ✅ Criptografia de dados sensíveis (CPF/CNPJ/PIS)
-- ✅ Conformidade com LGPD e políticas de RLS no Supabase
+## Tecnologias
 
----
+- Frontend: React, React Router, Axios
+- Bundler: Create React App (`react-scripts`)
+- Backend / DB: Supabase (Auth, Postgres, Edge Functions)
+- WhatsApp (local): Node.js + simulador (pasta `whatsapp-sim`)
+- Pagamentos: Stripe (modo teste)
 
-## 🛠️ **Tecnologias Utilizadas**
+## Estrutura de arquivos (importante)
 
-| Camada        | Tecnologia                          |
-|---------------|-------------------------------------|
-| **Frontend**  | React, React Router, Axios          |
-| **Backend**   | Supabase (Auth, Database, Edge Functions) |
-| **WhatsApp**  | Simulador local com WhatsApp Web.js (WWebJS) + preparado para API Oficial |
-| **Pagamentos**| Stripe (modo teste)                 |
-| **APIs**      | Receita WS (via proxy), Emissor Nacional de NFS-e (simulado) |
-| **Segurança** | Criptografia AES-GCM, RLS, LGPD     |
-| **Deploy**    | Vercel (frontend), Supabase (backend) |
+Principais arquivos e pastas:
 
----
+- `package.json` — scripts e dependências
+- `public/` — assets públicos (index.html, imagens)
+- `src/` — código React
+    - `src/App.jsx` — rotas da aplicação
+    - `src/index.js` — ponto de entrada
+    - `src/pages/` — páginas (HomePage, CadastroPage, LoginPage, PaymentPage, DashboardUser, EmitirNotaPage, EmitirGpsPage, DashboardPartner, AdminDashboard, PoliticaPrivacidade)
+    - `src/services/` — integrações (paymentService, whatsappService)
+    - `src/supabase/` — cliente Supabase e configurações
+    - `src/utils/` — helpers (encryption, validators)
+- `whatsapp-sim/` — servidor simulador WhatsApp (QR + web UI)
+- `supabase/functions/` — funções Edge (fetch-cnpj, create-checkout-session, stripe-webhook, whatsapp-webhook)
 
-## 📁 **Estrutura de Pastas**
+## Scripts úteis (do `package.json`)
 
-```
-rebelo-app/
-├── .env                          # Variáveis de ambiente
-├── public/                       # Assets públicos
-├── src/
-│   ├── assets/                   # Imagens, ícones
-│   ├── components/               # Componentes reutilizáveis
-│   │   ├── common/
-│   │   └── ui/
-│   ├── pages/                    # Telas da aplicação
-│   │   ├── HomePage.jsx
-│   │   ├── CadastroPage.jsx
-│   │   ├── DashboardUser.jsx
-│   │   ├── DashboardPartner.jsx
-│   │   ├── AdminDashboard.jsx
-│   │   ├── EmitirNotaPage.jsx
-│   │   ├── EmitirGpsPage.jsx
-│   │   ├── PaymentPage.jsx
-│   │   └── PoliticaPrivacidade.jsx
-│   ├── services/                 # Serviços de integração
-│   │   ├── paymentService.js
-│   │   └── whatsappService.js
-│   ├── supabase/
-│   │   └── client.js             # Cliente Supabase
-│   ├── utils/
-│   │   ├── encryption.js         # Criptografia AES-GCM
-│   │   └── validators.js         # Validação de CPF/CNPJ
-│   ├── App.jsx
-│   └── index.js
-├── whatsapp-sim/                 # Simulador de WhatsApp (Node.js)
-│   ├── server.js
-│   └── public/
-│       └── index.html
-└── rebelo-app/supabase/
-    └── functions/                # Edge Functions
-        ├── fetch-cnpj/
-        │   └── index.ts
-        ├── create-checkout-session/
-        │   └── index.ts
-        ├── stripe-webhook/
-        │   └── index.ts
-        └── whatsapp-webhook/
-            └── index.ts
-```
+- `npm start` — inicia o frontend (CRA) em `http://localhost:3000`
+- `npm run build` — build de produção
+- `npm test` — testes (react-scripts)
+- `npm run dev` — script que usa `concurrently` para iniciar frontend + supabase local + whatsapp-sim (ver notas abaixo)
+- `npm run dev:supabase` — `cd supabase && supabase start && supabase functions serve`
+- `npm run dev:whatsapp` — `cd ../whatsapp-sim && node server.js`
 
----
+Observação: para rodar `npm run dev` você precisa do Supabase CLI instalado globalmente e do `whatsapp-sim` configurado.
 
-## ⚙️ **Configuração Local**
+## Variáveis de ambiente (exemplo `.env`)
 
-### 1. Clone o repositório
+Crie um arquivo `.env` na raiz do projeto com ao menos as variáveis usadas pelo frontend:
 
-```bash
-git clone https://github.com/gesielr/guiasMEI.git
-cd rebelo-app
-```
+REACT_APP_SUPABASE_URL=your-supabase-url
+REACT_APP_SUPABASE_ANON_KEY=your-anon-key
+REACT_APP_ENCRYPTION_SECRET=uma_chave_secreta_com_pelo_menos_32_bytes
+REACT_APP_STRIPE_PUBLIC_KEY=pk_test_xxx
+REACT_APP_WHATSAPP_API_TOKEN=token_para_whatsapp (opcional para produção)
 
-### 2. Configure o `.env` na raiz
+Notas:
+- Nunca comite chaves secretas no repositório.
+- Algumas integrações (Stripe webhook secret, supabase service role) ficam nas funções do Supabase ou no painel do Supabase.
 
-```env
-# Supabase
-REACT_APP_SUPABASE_URL=https://seu-projeto.supabase.co
-REACT_APP_SUPABASE_ANON_KEY=sua-chave-anon-aqui
+## Como rodar local (Windows PowerShell)
 
-# Criptografia
-REACT_APP_ENCRYPTION_SECRET=uma_chave_secreta_muito_forte_aqui_32bytes!
+1) Instalar dependências (já executado na sua sessão):
 
-# WhatsApp (para produção)
-REACT_APP_WHATSAPP_PHONE_NUMBER_ID=123456789012345
-REACT_APP_WHATSAPP_ACCESS_TOKEN=EAAlZBw1xO...
-
-# Stripe (para produção)
-REACT_APP_STRIPE_PUBLIC_KEY=pk_test_... # Usada principalmente nas Edge Functions do Supabase
-```
-
-> 💡 Substitua pelos valores do seu projeto Supabase: https://supabase.com/dashboard
-
-### 3. Instale as dependências do frontend
-
-```bash
+```powershell
 npm install
 ```
 
-### 4. Configure o simulador de WhatsApp
+2) Iniciar apenas o frontend (modo de desenvolvimento):
 
-```bash
-cd whatsapp-sim
-npm install
-```
-
-### 5. Configure as Edge Functions (Supabase CLI)
-
-```bash
-cd rebelo-app # Altere para o diretório do frontend
-supabase login
-```
-
----
-
-## ▶️ **Como Executar**
-
-### ✅ Frontend (React)
-
-```bash
-cd rebelo-app
+```powershell
 npm start
+# Abre em http://localhost:3000
 ```
 
-> Acesse: `http://localhost:3000`
+3) Iniciar todos os serviços (frontend + supabase local + whatsapp-sim):
 
----
+```powershell
+npm run dev
+```
 
-### ✅ Simulador de WhatsApp (WWebJS)
+Requisitos para `npm run dev`:
 
-```bash
+- Supabase CLI instalado (https://supabase.com/docs/guides/cli)
+- Node.js instalado (recomendado >= 16)
+- `whatsapp-sim/server.js` deve estar presente e com dependências instaladas (`cd whatsapp-sim && npm install`)
+
+4) Rodar apenas o simulador de WhatsApp (se preferir separado):
+
+```powershell
 cd whatsapp-sim
 node server.js
 ```
 
-> Acesse: `http://localhost:3001` → escaneie o QR Code com seu WhatsApp.
+5) Rodar/executar localmente as Edge Functions do Supabase:
 
----
-
-### ✅ Supabase Edge Functions (Local)
-
-```bash
-cd rebelo-app
-supabase functions serve fetch-cnpj
-# Ou para servir todas:
+```powershell
+supabase start
 supabase functions serve
 ```
 
-> Acesse: `http://localhost:54321/functions/v1/fetch-cnpj?cnpj=00000000000000`
+## Rotas disponíveis (frontend)
+
+As rotas principais definidas em `src/App.jsx`:
+
+- `/` — HomePage
+- `/cadastro` — Página de cadastro
+- `/cadastro/mei` — Cadastro MEI
+- `/cadastro/autonomo` — Cadastro Autônomo
+- `/login` — Login
+- `/pagar` — PaymentPage (checkout)
+- `/dashboard` — Dashboard do Usuário
+- `/emitir-nota` — Emitir Nota (simulada)
+- `/emitir-gps` — Emitir GPS (simulado)
+- `/dashboard-parceiro` — Dashboard do Parceiro
+- `/admin` — AdminDashboard
+- `/politica-privacidade` — Política de Privacidade
+
+## Testes e verificação rápida
+
+- Verifique versões: `node -v` e `npm -v` (Node >= 16 recomendado).
+- Se o frontend travar na inicialização, delete `node_modules` e `package-lock.json` e rode `npm install` novamente.
+
+## Segurança / Privacidade
+
+- Dados sensíveis (CPF/CNPJ/PIS) são criptografados com AES-GCM antes de serem persistidos (veja `src/utils/encryption.js`).
+- Acesso e permissões controlados via Supabase Auth e regras RLS no banco.
+
+## Deploy (resumo)
+
+- Frontend: build com `npm run build` e deploy em Vercel/Netlify ou serviço equivalente.
+- Backend: funções do Supabase implantadas via `supabase functions deploy` e banco no Supabase.
+
+## Problemas comuns / Troubleshooting
+
+- Erro: "resource busy" no Supabase local — pare instâncias antigas e rode `supabase stop`.
+- Erro no start do CRA: verifique versões do Node e remova `node_modules` se necessário.
+- `npm run dev` falha: confirme que `supabase` está no PATH e `whatsapp-sim` tem `server.js` executável.
+
+## Contribuição
+
+- Abra uma issue descrevendo o bug ou feature.
+- Fork → branch feature → PR com descrição clara e screenshots se aplicável.
+
+## Licença
+
+MIT License
 
 ---
 
-## 🔄 **Fluxo de Teste Local**
+Se quiser, eu posso:
 
-1. Acesse `http://localhost:3000` → Cadastre-se como MEI ou Autônomo.
-2. Após cadastro, é redirecionado para WhatsApp com seu `user_id`.
-3. No WhatsApp, envie: `Olá! Sou novo usuário. Meu ID é: SEU_UUID`.
-4. A IA responde com links de contrato e pagamento.
-5. Clique no link de pagamento → pague com cartão de teste do Stripe (`4242...`).
-6. Após pagamento, acesse o Dashboard → emita nota fiscal e GPS.
-7. Teste também os dashboards de Parceiro e Admin (crie usuários manualmente no Supabase).
+- 1) abrir o site localmente executando `npm start` aqui;
+- 2) rodar `npm run dev` para levantar todos os serviços (precisa do Supabase CLI instalado); ou
+- 3) ajustar o README com instruções específicas de deploy (Vercel + Supabase) — me diga qual prefere.
 
----
-
-## 🔐 **Segurança e LGPD**
-
-- Todos os dados sensíveis (CPF, CNPJ, PIS) são criptografados com **AES-GCM** antes de salvar no banco.
-- Políticas de **Row Level Security (RLS)** aplicadas em todas as tabelas.
-- Consentimento explícito no cadastro + página de Política de Privacidade.
-- Logs de acesso e auditoria via tabela `whatsapp_logs`.
-
----
-
-## 📤 **Próximos Passos (Produção)**
-
-1. Substituir simulação de WhatsApp pela **API Oficial do WhatsApp Business Cloud**.
-2. Integrar com **API real do Emissor Nacional de NFS-e** (requer certificado digital).
-3. Implementar **web scraping ou API parceira para GPS real**.
-4. Fazer deploy do frontend na **Vercel** e ativar HTTPS.
-5. Configurar domínio personalizado e CI/CD.
-
----
-
-## 📜 **Licença**
-
-MIT License — Livre para uso, modificação e distribuição.
-
----

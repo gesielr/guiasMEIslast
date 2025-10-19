@@ -1,0 +1,42 @@
+{
+  "name": "@guiasmei/web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint src --ext .jsx,.tsx",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@guiasmei/config": "*",
+    "@guiasmei/sdk": "*",
+    "@guiasmei/ui": "*",
+    "@hookform/resolvers": "^3.9.1",
+    "@tanstack/react-query": "^5.24.8",
+    "@supabase/supabase-js": "^2.57.4",
+    "axios": "^1.6.0",
+    "date-fns": "^3.6.0",
+    "lucide-react": "^0.344.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-hook-form": "^7.51.2",
+    "react-router-dom": "^6.22.1",
+    "recharts": "^2.10.3",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.48",
+    "@types/react-dom": "^18.2.18",
+    "@vitejs/plugin-react": "^4.2.1",
+    "autoprefixer": "^10.4.18",
+    "eslint": "^8.57.0",
+    "eslint-config-react-app": "^7.0.1",
+    "postcss": "^8.4.35",
+    "tailwindcss": "^3.4.3",
+    "typescript": "^5.4.2",
+    "vite": "^5.1.0",
+    "vitest": "^1.4.0"
+  }
+}

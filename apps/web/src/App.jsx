@@ -1,0 +1,38 @@
+import { Routes, Route } from "react-router-dom";
+import HomePage from "./features/HomePage";
+import CadastroPage from "./features/auth/CadastroPage";
+import CadastroPageMei from "./features/auth/CadastroPageMei";
+import CadastroPageGps from "./features/auth/CadastroPageGps";
+import CadastroPageParceiro from "./features/auth/CadastroPageParceiro";
+import LoginPage from "./features/auth/LoginPage";
+import AdminDashboard from "./features/dashboards/AdminDashboard";
+import DashboardUser from "./features/dashboards/DashboardUser";
+import DashboardPartner from "./features/dashboards/DashboardPartner";
+import EmitirNotaPage from "./features/nfse/EmitirNotaPage";
+import EmitirGpsPage from "./features/gps/EmitirGpsPage";
+import PaymentPage from "./features/pagamentos/PaymentPage";
+import PoliticaPrivacidade from "./features/legal/PoliticaPrivacidade";
+
+export default function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<HomePage />} />
+      <Route path="/cadastro" element={<CadastroPage />} />
+      <Route path="/cadastro/mei" element={<CadastroPageMei />} />
+      <Route path="/cadastro/autonomo" element={<CadastroPageGps />} />
+      <Route path="/cadastro/parceiro" element={<CadastroPageParceiro />} />
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/emitir-nota" element={<EmitirNotaPage />} />
+      <Route path="/emitir-gps" element={<EmitirGpsPage />} />
+      <Route path="/pagamentos" element={<PaymentPage />} />
+      <Route path="/politica-privacidade" element={<PoliticaPrivacidade />} />
+      <Route path="/dashboard" element={<DashboardUser />} />
+      <Route path="/dashboard/usuario" element={<DashboardUser />} />
+      <Route path="/dashboard/parceiro" element={<DashboardPartner />} />
+      <Route path="/dashboard-parceiro" element={<DashboardPartner />} />
+      <Route path="/dashboard/admin" element={<AdminDashboard />} />
+      <Route path="/parceiro/dashboard" element={<DashboardPartner />} />
+      <Route path="/admin" element={<AdminDashboard />} />
+    </Routes>
+  );
+}

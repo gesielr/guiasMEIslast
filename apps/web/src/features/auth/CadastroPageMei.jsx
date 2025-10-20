@@ -1,9 +1,10 @@
 ﻿import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { supabase } from "../../supabase/client.js";
+import { Link } from "react-router-dom";
 import { validateCNPJ } from "../../utils/validators.js";
 import { encryptData } from "../../utils/encryption.js";
 import logo from "../../assets/logo.png";
+import { useAuth } from "../../providers/auth-provider.jsx";
+import { useSearchParams } from "react-router-dom";
 
 const CadastroPage = () => {
   const [formData, setFormData] = useState({
@@ -27,7 +28,9 @@ const CadastroPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [consentGiven, setConsentGiven] = useState(false);
-  const navigate = useNavigate();
+  const { register } = useAuth();
+  const [searchParams] = useSearchParams();
+  const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER || "5511999999999";
 
   const handleDocumentChange = async (event) => {
     const doc = event.target.value.replace(/\D/g, "");
@@ -77,30 +80,25 @@ const CadastroPage = () => {
 
     setLoading(true);
     try {
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: formData.email,
-        password: formData.password,
-      });
-
-      if (authError) throw authError;
-      if (!authData?.user?.id) {
-        throw new Error("Não foi possível obter o usuário criado.");
-      }
-
       const encryptedDocument = await encryptData(formData.document);
 
-      const { error: profileError } = await supabase.from("profiles").upsert({
-        id: authData.user.id,
-        name: formData.name,
+     const referralCode = searchParams.get("ref") ?? undefined;
+      const response = await register({
+        role: "mei",
+        email: formData.email,
+        password: formData.password,
+        name: formData.name || formData.business_name,
+        phone: formData.phone,
         document: encryptedDocument,
-        business_name: formData.business_name,
-        user_type: "mei",
-      }, { onConflict: "id", returning: "minimal" });
+        businessName: formData.business_name,
+        referralCode
+      });
 
-      if (profileError) throw profileError;
+     const whatsappLink = response?.whatsappLink
+        ?? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent("Quero ativar minha conta GuiasMEI")}`;
 
-      setLoading(false);
-      navigate("/dashboard");
+
+     window.location.href = whatsappLink;
     } catch (err) {
       setError("Erro no cadastro: " + (err.message || "Erro desconhecido"));
       setLoading(false);

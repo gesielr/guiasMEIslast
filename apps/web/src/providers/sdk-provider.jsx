@@ -6,7 +6,7 @@ const SdkContext = createContext(null);
 export function SdkProvider({ children }) {
   const sdk = useMemo(() => {
     return createSdk({
-      baseUrl: import.meta.env.VITE_API_URL ?? "http://localhost:54321/functions/v1",
+      baseUrl: import.meta.env.VITE_API_URL ?? "http://localhost:3333",
       mode: import.meta.env.VITE_APP_MODE ?? "mock"
     });
   }, []);

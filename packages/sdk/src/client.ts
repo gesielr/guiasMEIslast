@@ -38,7 +38,11 @@ export function createSdk(config: SdkConfig) {
     auth: {
       async register(payload: Record<string, unknown>) {
         if (config.mode === "mock") {
-          return { userId: "mock-user", ...payload } as const;
+         return {
+            userId: "mock-user",
+            whatsappLink: "https://wa.me/5511999999999?text=Bem-vindo%20ao%20GuiasMEI",
+            redirectTo: "/dashboard"
+          } as const;
         }
         return request(config, "/auth/register", {
           method: "POST",
@@ -47,7 +51,11 @@ export function createSdk(config: SdkConfig) {
       },
       async login(payload: { identifier: string; password: string }) {
         if (config.mode === "mock") {
-          return { token: "mock-token", challengeRequired: true } as const;
+          return {
+            session: { access_token: "mock", refresh_token: "mock" },
+            profile: { user_type: "partner" },
+            challengeRequired: false
+          } as const;
         }
         return request(config, "/auth/login", {
           method: "POST",

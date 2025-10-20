@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { supabase } from '../../supabase/client';
+import { useAuth } from '../../providers/auth-provider';
 import { useNavigate, Link } from 'react-router-dom';
 import logo from '../../assets/logo.png';
 
 const LoginPage = () => {
-  const [phone, setPhone] = useState(''); // Changed from email to phone
+  const { login } = useAuth();
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
   const navigate = useNavigate();
+  const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER || '5511999999999';
 
   useEffect(() => {
     const handleResize = () => {
@@ -28,10 +30,20 @@ const LoginPage = () => {
     setError('');
 
     try {
-      // Using signInWithPassword with phone as identifier
-      const { error } = await supabase.auth.signInWithPassword({ phone, password });
-      if (error) throw error;
-      navigate('/dashboard');
+    const result = await login(identifier, password);
+
+      const userType = result?.profile?.user_type;
+      if (userType === 'partner') {
+        navigate('/dashboard/parceiro');
+        return;
+      }
+      if (userType === 'admin') {
+        navigate('/dashboard/admin');
+        return;
+      }
+
+      const whatsappLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent('Olá! Quero falar com a IA do GuiasMEI.')}`;
+      window.location.href = whatsappLink;
     } catch (err) {
       setError(err.message || 'Erro ao fazer login.');
     } finally {
@@ -60,11 +72,12 @@ const LoginPage = () => {
 
           <form onSubmit={handleLogin} style={styles.form}>
             <div>
-              <label style={styles.label}>Telefone</label> {/* Changed label to Telefone */}
+              <label style={styles.label}>E-mail ou telefone</label>
               <input
-                type="tel" // Changed type to tel
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                type="text"
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
+                placeholder="seuemail@exemplo.com"
                 required
                 style={styles.input}
               />

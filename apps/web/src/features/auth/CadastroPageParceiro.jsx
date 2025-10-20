@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { supabase } from "../../supabase/client";
+import { useAuth } from "../../providers/auth-provider.jsx";
 import { encryptData } from "../../utils/encryption";
 import logo from "../../assets/logo.png";
 
@@ -17,6 +17,7 @@ const CadastroPageParceiro = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { register } = useAuth();
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -39,49 +40,24 @@ const CadastroPageParceiro = () => {
 
     setLoading(true);
     try {
-      const { data: authData, error: authError } = await supabase.auth.signUp({
+      const encryptedDocument = await encryptData(formData.document.replace(/\D/g, ""));
+      const response = await register({
+        role: "partner",
         email: formData.email,
         password: formData.password,
-        options: {
-          data: {
-            user_type: "partner",
-            phone: formData.phone ?? null
-          }
-        }
+        name: formData.company_name,
+        phone: formData.phone,
+        document: encryptedDocument,
+        businessName: formData.company_name
       });
 
-      if (authError) throw authError;
-      if (!authData?.user?.id) {
-        throw new Error("Não foi possível criar o usuário parceiro.");
+       if (response?.redirectTo) {
+        navigate("/dashboard/parceiro");
+      } else {
+        navigate("/login");
       }
 
-      const encryptedDocument = await encryptData(formData.document);
-
-      const { error: partnerError } = await supabase.from("partners").upsert(
-        {
-          id: authData.user.id,
-          company_name: formData.company_name,
-          document: encryptedDocument,
-          crc: formData.crc,
-          email: formData.email,
-          phone: formData.phone
-        },
-        { onConflict: "id", returning: "minimal" }
-      );
-      if (partnerError) throw partnerError;
-
-      const { error: profileError } = await supabase.from("profiles").upsert(
-        {
-          id: authData.user.id,
-          name: formData.company_name,
-          document: encryptedDocument,
-          user_type: "partner"
-        },
-        { onConflict: "id", returning: "minimal" }
-      );
-      if (profileError) throw profileError;
-
-      navigate("/dashboard/parceiro");
+      
     } catch (err) {
       setError(err.message ?? "Erro ao criar cadastro de parceiro.");
     } finally {
@@ -158,15 +134,13 @@ const CadastroPageParceiro = () => {
               />
             </label>
             <label style={styles.label}>
-              Telefone (opcional)
+              WhatsApp
               <input
                 style={styles.input}
                 name="phone"
                 value={formData.phone}
-                onChange={(event) =>
-                  setFormData((prev) => ({ ...prev, phone: event.target.value.replace(/\D/g, "") }))
-                }
-                placeholder="(00) 00000-0000"
+                onChange={handleChange}
+                placeholder="11999999999"
               />
             </label>
             <label style={styles.label}>
@@ -188,17 +162,15 @@ const CadastroPageParceiro = () => {
                 checked={consentGiven}
                 onChange={(event) => setConsentGiven(event.target.checked)}
               />
-              Concordo com a Política de Privacidade e Termos de Uso.
+              <span>
+                Declaro que li e concordo com os <Link to="/politica-privacidade" style={styles.link}>Termos de Uso</Link> e a Política de Privacidade.
+              </span>
             </label>
 
-            <button type="submit" style={styles.submitButton} disabled={loading}>
-              {loading ? "Enviando..." : "Cadastrar parceiro"}
+             <button type="submit" disabled={loading} style={styles.submitButton}>
+              {loading ? "Enviando..." : "Cadastrar"}
             </button>
           </form>
-
-          <p style={styles.helperText}>
-            Já possui conta? <Link to="/login" style={styles.link}>Acesse aqui</Link>
-          </p>
         </div>
       </div>
     </div>
@@ -209,24 +181,25 @@ const styles = {
   pageContainer: {
     display: "flex",
     minHeight: "100vh",
-    justifyContent: "center",
-    alignItems: "center",
-    background: "linear-gradient(135deg, #f1f5ff 0%, #f8fbff 100%)",
     fontFamily: '"Inter", sans-serif',
     padding: "24px"
   },
   formSection: {
-    maxWidth: "520px",
-    width: "100%"
+    flex: 1,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center"
   },
   formContainer: {
-    backgroundColor: "#ffffff",
-    padding: "40px 48px",
+    width: "100%",
+    maxWidth: "580px",
+    backgroundColor: "#fff",
+    padding: "48px",
     borderRadius: "24px",
     boxShadow: "0 28px 60px rgba(15, 23, 42, 0.08)",
     display: "flex",
     flexDirection: "column",
-    gap: "24px"
+    gap: "28px"
   },
   logoWrapper: {
     display: "flex",
@@ -238,97 +211,90 @@ const styles = {
   logoBadge: {
     width: "72px",
     height: "72px",
+    backgroundColor: "#dbeafe",
     borderRadius: "18px",
-    background: "#ecfdf3",
     display: "flex",
     alignItems: "center",
     justifyContent: "center"
   },
   logo: {
-    width: "40px"
+    width: "48px",
+    height: "48px",
+    objectFit: "contain"
   },
   title: {
-    fontSize: "26px",
-    fontWeight: 700,
+    fontSize: "28px",
+    fontWeight: "700",
     color: "#1f2937",
     margin: 0
   },
   subtitle: {
-    color: "#64748b",
-    fontSize: "15px",
+    fontSize: "16px",
+    color: "#475569",
     margin: 0,
-    lineHeight: 1.5
+ 
+  },
+  error: {
+    backgroundColor: "#fee2e2",
+    color: "#b91c1c",
+    padding: "12px",
+    borderRadius: "12px",
+    textAlign: "center"
+  },
+  form: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "18px"
+  },
+  label: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "6px",
+    fontSize: "14px",
+    color: "#1f2937",
+    fontWeight: "600"
+  },
+  input: {
+    padding: "14px",
+    borderRadius: "12px",
+    border: "1px solid #d1d5db",
+    fontSize: "16px",
+    outline: "none"
+  },
+  checkboxLabel: {
+    display: "flex",
+    alignItems: "center",
+    gap: "12px",
+    fontSize: "14px",
+    color: "#475569"
+  },
+  link: {
+    color: "#2563eb",
+    textDecoration: "none",
+    fontWeight: 600
+  },
+  submitButton: {
+    marginTop: "12px",
+    padding: "16px",
+    borderRadius: "12px",
+    border: "none",
+    background: "linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)",
+    color: "#fff",
+    fontSize: "16px",
+    fontWeight: "600",
+    cursor: "pointer"
   },
   backLink: {
     display: "inline-flex",
     alignItems: "center",
     gap: "8px",
-    textDecoration: "none",
     color: "#475569",
+    textDecoration: "none",
     fontSize: "14px",
-    fontWeight: 500
+    fontWeight: "500"
   },
   backIcon: {
-    fontSize: "18px",
-    lineHeight: 1
-  },
-  error: {
-    background: "#fee2e2",
-    color: "#b91c1c",
-    padding: "12px 16px",
-    borderRadius: "12px",
-    fontSize: "14px"
-  },
-  form: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "16px"
-  },
-  label: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "8px",
-    fontSize: "14px",
-    color: "#1f2937",
-    fontWeight: 500
-  },
-  input: {
-    padding: "14px 16px",
-    borderRadius: "14px",
-    border: "1px solid #d5dbea",
-    fontSize: "15px",
-    color: "#1f2937",
-    outline: "none",
-    transition: "border-color 0.2s, box-shadow 0.2s"
-  },
-  checkboxLabel: {
-    display: "flex",
-    alignItems: "center",
-    gap: "10px",
-    fontSize: "13px",
-    color: "#475569"
-  },
-  submitButton: {
-    marginTop: "8px",
-    padding: "14px 16px",
-    borderRadius: "16px",
-    border: "none",
-    background: "#0F9D58",
-    color: "#ffffff",
-    fontWeight: 600,
-    fontSize: "15px",
-    cursor: "pointer",
-    transition: "transform 0.2s, box-shadow 0.2s"
-  },
-  helperText: {
-    textAlign: "center",
-    fontSize: "13px",
-    color: "#64748b"
-  },
-  link: {
-    color: "#0F9D58",
-    fontWeight: 600,
-    textDecoration: "none"
+    fontSize: "18px"
   }
 };
 

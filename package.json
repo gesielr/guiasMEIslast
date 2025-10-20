@@ -7,7 +7,9 @@
   ],
   "scripts": {
     "dev": "npm run dev --workspace=@guiasmei/web",
+    "dev:api": "npm run dev --workspace=@guiasmei/backend",
     "build": "npm run build --workspace=@guiasmei/web",
+    "build:api": "npm run build --workspace=@guiasmei/backend",
     "lint": "npm run lint --workspace=@guiasmei/web",
     "test": "npm run test --workspace=@guiasmei/web"
   },

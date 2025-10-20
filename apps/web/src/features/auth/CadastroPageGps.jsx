@@ -1,9 +1,9 @@
 ﻿import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { supabase } from "../../supabase/client.js";
+import { Link, useSearchParams } from "react-router-dom";
 import { validateCPF } from "../../utils/validators.js";
 import { encryptData } from "../../utils/encryption.js";
 import logo from "../../assets/logo.png";
+import { useAuth } from "../../providers/auth-provider.jsx";
 
 const CadastroPage = () => {
   const [formData, setFormData] = useState({
@@ -12,7 +12,7 @@ const CadastroPage = () => {
     email: "",
     phone: "",
     name: "",
-    password: "",
+    password: "", 
   });
 
   const safeFormData = {
@@ -27,7 +27,9 @@ const CadastroPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [consentGiven, setConsentGiven] = useState(false);
-  const navigate = useNavigate();
+  const { register } = useAuth();
+  const [searchParams] = useSearchParams();
+  const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER || "5548991117268";
 
   const handleDocumentChange = (event) => {
     const doc = event.target.value.replace(/\D/g, "");
@@ -52,30 +54,28 @@ const CadastroPage = () => {
 
     setLoading(true);
     try {
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        password: formData.password,
-      });
-
-      if (authError) throw authError;
-      if (!authData?.user?.id) {
-        throw new Error("Não foi possível obter o usuário criado.");
-      }
-
+      
       const encryptedDocument = await encryptData(formData.document);
-      const encryptedPis = formData.pis ? await encryptData(formData.pis) : null;
-
-      const { error: profileError } = await supabase.from("profiles").upsert({
-        id: authData.user.id,
+      const encryptedPis = formData.pis ? await encryptData(formData.pis) : undefined;
+      const referralCode = searchParams.get("ref") ?? undefined;
+      
+      const response = await register({
+        role: "autonomo",
+        email: formData.email,
+        password: formData.password,
         name: formData.name,
+        phone: formData.phone,
         document: encryptedDocument,
         pis: encryptedPis,
-        user_type: "autonomo",
-      }, { onConflict: "id", returning: "minimal" });
+        referralCode,
+         });
 
-      if (profileError) throw profileError;
+        const whatsappLink = response?.whatsappLink
+        ?? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent("Quero gerar minha guia GuiasMEI")}`;
+         window.location.href = whatsappLink;
 
-      setLoading(false);
-      navigate("/dashboard");
+        setLoading(false);
+        window.location.href = whatsappLink;
     } catch (err) {
       setError("Erro no cadastro: " + (err.message || "Erro desconhecido"));
       setLoading(false);
@@ -126,6 +126,17 @@ const CadastroPage = () => {
             </div>
 
             <div>
+              <label style={styles.label}>PIS (opcional)</label>
+              <input
+                type="text"
+                value={safeFormData.pis}
+                onChange={(event) => setFormData({ ...formData, pis: event.target.value.replace(/\D/g, "") })}
+                placeholder="000.0000.000-0"
+                style={styles.input}
+              />
+            </div>
+
+            <div>
               <label style={styles.label}>E-mail</label>
               <input
                 type="email"
@@ -142,7 +153,7 @@ const CadastroPage = () => {
                 type="tel"
                 value={safeFormData.phone}
                 onChange={(event) => setFormData({ ...formData, phone: event.target.value })}
-                placeholder="Ex: 11999999999"
+                placeholder="11999999999"
                 required
                 style={styles.input}
               />
@@ -159,16 +170,6 @@ const CadastroPage = () => {
               />
             </div>
 
-            <div>
-              <label style={styles.label}>Número do PIS (Opcional)</label>
-              <input
-                type="text"
-                value={safeFormData.pis}
-                onChange={(event) => setFormData({ ...formData, pis: event.target.value })}
-                style={styles.input}
-              />
-            </div>
-
             <div style={styles.consentContainer}>
               <input
                 type="checkbox"
@@ -181,15 +182,8 @@ const CadastroPage = () => {
               </label>
             </div>
 
-            <button
-              type="submit"
-              disabled={loading || !consentGiven}
-              style={{
-                ...styles.submitButton,
-                opacity: loading || !consentGiven ? 0.7 : 1,
-              }}
-            >
-              {loading ? "Cadastrando..." : "Finalizar Cadastro"}
+            <button type="submit" disabled={loading} style={styles.submitButton}>
+            {loading ? "Enviando..." : "Concluir cadastro"}
             </button>
           </form>
         </div>
@@ -202,43 +196,28 @@ const styles = {
   pageContainer: {
     display: "flex",
     minHeight: "100vh",
-    justifyContent: "center",
-    alignItems: "center",
-    background: "linear-gradient(135deg, #f1f5ff 0%, #f8fbff 100%)",
     fontFamily: '"Inter", sans-serif',
-    padding: "24px",
+    background: "linear-gradient(135deg, #f1f5ff 0%, #f8fbff 100%)",
+    alignItems: "center",
   },
   formSection: {
-    width: "100%",
+    flex: 1,
     display: "flex",
     justifyContent: "center",
-    padding: "16px",
+    alignItems: "center",
   },
   formContainer: {
-    maxWidth: "440px",
+    maxWidth: "520px",
     width: "100%",
-    backgroundColor: "#ffffff",
-    padding: "40px 48px",
+    backgroundColor: "#fff",
+    padding: "48px",
     borderRadius: "24px",
     boxShadow: "0 28px 60px rgba(15, 23, 42, 0.08)",
     display: "flex",
     flexDirection: "column",
-    gap: "24px",
+    gap: "28px",
   },
-  backLink: {
-    display: "inline-flex",
-    alignItems: "center",
-    gap: "8px",
-    textDecoration: "none",
-    color: "#475569",
-    fontSize: "14px",
-    fontWeight: "500",
-  },
-  backIcon: {
-    fontSize: "18px",
-    lineHeight: "1",
-  },
-  logoWrapper: {
+   logoWrapper: {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -246,30 +225,36 @@ const styles = {
     gap: "12px",
   },
   logoBadge: {
-    width: "88px",
-    height: "88px",
-    borderRadius: "26px",
-    background: "linear-gradient(160deg, #ebf2ff 0%, #dbe8ff 100%)",
+    width: "72px",
+    height: "72px",
+    borderRadius: "18px",
+    background: "#e7f1ff",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
   },
   logo: {
-    width: "52px",
-    height: "52px",
+    width: "48px",
+    height: "48px",
     objectFit: "contain",
   },
   title: {
-    fontSize: "26px",
+    fontSize: "28px",
     fontWeight: "700",
     color: "#1f2937",
     margin: 0,
   },
   subtitle: {
+    fontSize: "16px",
     color: "#64748b",
     margin: 0,
-    fontSize: "15px",
-    lineHeight: "1.5",
+  },
+  error: {
+    backgroundColor: "#fee2e2",
+    color: "#b91c1c",
+    padding: "12px",
+    borderRadius: "12px",
+    textAlign: "center",
   },
   form: {
     display: "flex",
@@ -278,62 +263,64 @@ const styles = {
   },
   label: {
     fontWeight: "600",
+    fontSize: "14px",
+    color: "#334155",
     marginBottom: "6px",
     display: "block",
-    fontSize: "14px",
-    color: "#1e293b",
-  },
+    },
   input: {
-    padding: "12px 14px",
-    fontSize: "14px",
-    border: "1px solid #d5dbea",
-    borderRadius: "10px",
     width: "100%",
-    boxSizing: "border-box",
-    backgroundColor: "#f9fbff",
-  },
-  submitButton: {
     padding: "14px",
-    fontSize: "15px",
-    fontWeight: "600",
-    backgroundColor: "#3c6df0",
-    color: "#ffffff",
-    border: "none",
+    border: "1px solid #d5dbea",
     borderRadius: "12px",
-    cursor: "pointer",
-    marginTop: "8px",
-    transition: "opacity 0.2s ease",
-  },
-  error: {
-    color: "#b91c1c",
-    backgroundColor: "#fee2e2",
-    padding: "14px",
-    borderRadius: "12px",
-    border: "1px solid #fecaca",
-    fontSize: "13px",
+    fontSize: "16px",
+    color: "#1f2937",
+    outline: "none",
   },
   consentContainer: {
     display: "flex",
     alignItems: "flex-start",
-    gap: "10px",
-    marginTop: "4px",
+    gap: "12px",
   },
   checkbox: {
     marginTop: "4px",
   },
   consentLabel: {
-    fontSize: "13px",
-    lineHeight: "1.6",
+     fontSize: "14px",
     color: "#475569",
+    lineHeight: 1.5,
   },
   link: {
-    color: "#3c6df0",
+    color: "#2563eb",
     textDecoration: "none",
+    fontWeight: 600,
+  },
+  submitButton: {
+    background: "linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)",
+    color: "#fff",
+    border: "none",
+    borderRadius: "12px",
+    padding: "16px",
+    fontSize: "16px",
     fontWeight: "600",
+    cursor: "pointer",
+  },
+  backLink: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "8px",
+    color: "#475569",
+    textDecoration: "none",
+    fontSize: "14px",
+    fontWeight: "500",
+  },
+  backIcon: {
+    fontSize: "18px",
   },
 };
 
 export default CadastroPage;
+
 
 
 

@@ -53,6 +53,26 @@ export function AuthProvider({ children }) {
         return result;
       },
       async register(payload) {
+        const appMode = import.meta.env.VITE_APP_MODE ?? "mock";
+        if (appMode === "mock") {
+          const mockSession = {
+            access_token: `mock_access_token_${Math.random()}`,
+            refresh_token: `mock_refresh_token_${Math.random()}`,
+            user: {
+              id: `mock-user-id-${Math.random()}`,
+              email: payload.email,
+              app_metadata: { provider: "email" },
+              user_metadata: {
+                name: payload.name,
+                role: payload.role
+              }
+            }
+          };
+          await supabase.auth.setSession(mockSession);
+          setSession(mockSession);
+          return { session: mockSession };
+        }
+
         const response = await sdk.auth.register(payload);
 
         if (response?.session) {

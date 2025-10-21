@@ -5,6 +5,7 @@ import CadastroPageMei from "./features/auth/CadastroPageMei";
 import CadastroPageGps from "./features/auth/CadastroPageGps";
 import CadastroPageParceiro from "./features/auth/CadastroPageParceiro";
 import LoginPage from "./features/auth/LoginPage";
+import AdminLoginPage from "./features/auth/AdminLoginPage";
 import AdminDashboard from "./features/dashboards/AdminDashboard";
 import DashboardUser from "./features/dashboards/DashboardUser";
 import DashboardPartner from "./features/dashboards/DashboardPartner";
@@ -22,6 +23,7 @@ export default function App() {
       <Route path="/cadastro/autonomo" element={<CadastroPageGps />} />
       <Route path="/cadastro/parceiro" element={<CadastroPageParceiro />} />
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/admin/login" element={<AdminLoginPage />} />
       <Route path="/emitir-nota" element={<EmitirNotaPage />} />
       <Route path="/emitir-gps" element={<EmitirGpsPage />} />
       <Route path="/pagamentos" element={<PaymentPage />} />

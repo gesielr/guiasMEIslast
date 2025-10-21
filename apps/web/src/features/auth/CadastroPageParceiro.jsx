@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../providers/auth-provider.jsx";
+import { AuthContext } from "../../auth/AuthProvider.jsx"; // Import the second context
 import { encryptData } from "../../utils/encryption";
 import logo from "../../assets/logo.png";
 
 const CadastroPageParceiro = () => {
+  const appMode = import.meta.env.VITE_APP_MODE ?? "mock";
   const [formData, setFormData] = useState({
     company_name: "",
     document: "",
@@ -18,6 +20,7 @@ const CadastroPageParceiro = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const { register } = useAuth();
+  const { setUser } = useContext(AuthContext); // Get setUser from the second provider
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -51,11 +54,13 @@ const CadastroPageParceiro = () => {
         businessName: formData.company_name
       });
 
-       if (response?.redirectTo) {
-        navigate("/dashboard/parceiro");
-      } else {
-        navigate("/login");
+      // Manually set the user in the second provider to avoid race condition
+      if (response.session?.user) {
+        setUser(response.session.user);
       }
+
+      const redirectTarget = response?.redirectTo ?? (appMode === "mock" ? "/dashboard/parceiro" : null);
+      navigate(redirectTarget ?? "/login");
 
       
     } catch (err) {

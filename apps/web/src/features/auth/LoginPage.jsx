@@ -30,7 +30,7 @@ const LoginPage = () => {
     setError('');
 
     try {
-    const result = await login(identifier, password);
+          const result = await login(identifier, password);
 
       const userType = result?.profile?.user_type;
       if (userType === 'partner') {
@@ -203,3 +203,4 @@ const styles = {
 };
 
 export default LoginPage;
+

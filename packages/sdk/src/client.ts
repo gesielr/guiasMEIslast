@@ -40,8 +40,8 @@ export function createSdk(config: SdkConfig) {
         if (config.mode === "mock") {
          return {
             userId: "mock-user",
-            whatsappLink: "https://wa.me/5511999999999?text=Bem-vindo%20ao%20GuiasMEI",
-            redirectTo: "/dashboard"
+            whatsappLink: "https://wa.me/5548991117268?text=Bem-vindo%20ao%20GuiasMEI",
+            redirectTo: "/dashboard/parceiro"
           } as const;
         }
         return request(config, "/auth/register", {

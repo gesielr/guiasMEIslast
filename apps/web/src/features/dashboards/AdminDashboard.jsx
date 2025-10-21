@@ -5,6 +5,10 @@ import { useNavigate } from 'react-router-dom';
 import { decryptData } from '../../utils/encryption';
 import logo from '../../assets/logo.png';
 
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL ?? process.env.REACT_APP_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY ?? process.env.REACT_APP_SUPABASE_ANON_KEY;
+const supabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey);
+
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
   const [partners, setPartners] = useState([]);
@@ -15,6 +19,17 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
 
   const calculateAdminStats = useCallback(async () => {
+    if (!supabaseConfigured) {
+      setStats({
+        total_users: 128,
+        total_partners: 12,
+        total_nfse: 420,
+        total_gps: 315,
+        total_revenue: 420 * 3.0 + 315 * 15.0,
+      });
+      return;
+    }
+
     try {
       const { count: usersCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).neq('user_type', 'admin');
       const { count: partnersCount } = await supabase.from('partners').select('*', { count: 'exact', head: true });
@@ -36,6 +51,16 @@ const AdminDashboard = () => {
 
   const fetchAdminData = useCallback(async () => {
     try {
+      if (!supabaseConfigured) {
+        setUsers([
+          { id: 'mock-user-1', name: 'Maria da Silva', document: '12345678901', user: { email: 'maria@example.com' }, onboarding_completed: true },
+          { id: 'mock-user-2', name: 'Joao Souza', document: '98765432100', user: { email: 'joao@example.com' }, onboarding_completed: false }
+        ]);
+        setPartners([{ id: 'mock-partner-1', company_name: 'Contabilidade Exemplo', cnpj: '12345678000199', email: 'contato@exemplo.com' }]);
+        await calculateAdminStats();
+        setLoading(false);
+        return;
+      }
       const { data: { user: authUser } } = await supabase.auth.getUser();
       if (!authUser || authUser.user_metadata?.user_type !== 'admin') {
         navigate('/login');
@@ -190,3 +215,6 @@ const styles = {
 };
 
 export default AdminDashboard;
+
+
+

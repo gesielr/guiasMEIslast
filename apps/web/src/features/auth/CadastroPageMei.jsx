@@ -6,6 +6,9 @@ import logo from "../../assets/logo.png";
 import { useAuth } from "../../providers/auth-provider.jsx";
 import { useSearchParams } from "react-router-dom";
 
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL ?? process.env.REACT_APP_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY ?? process.env.REACT_APP_SUPABASE_ANON_KEY;
+
 const CadastroPage = () => {
   const [formData, setFormData] = useState({
     document: "",
@@ -30,17 +33,32 @@ const CadastroPage = () => {
   const [consentGiven, setConsentGiven] = useState(false);
   const { register } = useAuth();
   const [searchParams] = useSearchParams();
-  const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER || "5511999999999";
+  const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER || "5548991117268";
 
   const handleDocumentChange = async (event) => {
     const doc = event.target.value.replace(/\D/g, "");
     setFormData((prev) => ({ ...prev, document: doc }));
 
     if (doc.length === 14) {
+      if (!supabaseUrl || !supabaseAnonKey) {
+        // modo mock: usa dados fictícios para testes locais
+        setFormData((prev) => ({
+          ...prev,
+          business_name: `Empresa MEI ${doc.slice(-4)}`,
+          name: `Responsável ${doc.slice(-3)}`,
+        }));
+        setError("");
+        return;
+      }
       setLoading(true);
       try {
-        const url = `${process.env.REACT_APP_SUPABASE_URL}/functions/v1/fetch-cnpj?cnpj=${doc}`;
-        const response = await fetch(url);
+        const url = `${supabaseUrl}/functions/v1/fetch-cnpj?cnpj=${doc}`;
+        const response = await fetch(url, {
+          headers: {
+            apikey: supabaseAnonKey,
+            Authorization: `Bearer ${supabaseAnonKey}`,
+          },
+        });
         if (!response.ok) throw new Error("Erro ao buscar CNPJ.");
 
         const data = await response.json();
@@ -50,6 +68,7 @@ const CadastroPage = () => {
             business_name: data.fantasia || data.nome || "",
             name: data.nome || "",
           }));
+          setError("");
         } else {
           setError("CNPJ não encontrado ou inválido.");
         }

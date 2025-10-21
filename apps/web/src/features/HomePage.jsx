@@ -44,6 +44,7 @@ const HomePage = () => {
           </nav>
 
           <div style={styles.headerCtas}>
+            <Link to="/admin/login" style={styles.adminButton}>Acesso Restrito Admin</Link>
             <Link to="/login" style={styles.loginLink}>Entrar</Link>
             <Link to="/cadastro" style={styles.primaryButton}>Começar agora</Link>
           </div>
@@ -746,6 +747,20 @@ const baseStyles = {
     fontSize: 15,
     fontWeight: 500,
   },
+  adminButton: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '10px 18px',
+    borderRadius: 10,
+    border: '1px solid #1F2937',
+    color: '#1F2937',
+    textDecoration: 'none',
+    fontWeight: 600,
+    backgroundColor: 'transparent',
+    transition: 'background-color 0.2s ease, color 0.2s ease',
+    width: 'auto',
+  },
   primaryButton: {
     background: 'linear-gradient(135deg, #10B981, #059669)',
     color: '#FFFFFF',
@@ -1313,6 +1328,11 @@ const getStyles = (isMobile) => ({
     marginTop: isMobile ? 20 : baseStyles.heroImageRight.marginTop,
     display: isMobile ? 'block' : baseStyles.heroImageRight.display,
     alignSelf: isMobile ? 'center' : baseStyles.heroImageRight.alignSelf,
+  },
+  adminButton: {
+    ...baseStyles.adminButton,
+    width: isMobile ? '100%' : baseStyles.adminButton.width,
+    textAlign: 'center',
   },
   primaryButton: {
     ...baseStyles.primaryButton,

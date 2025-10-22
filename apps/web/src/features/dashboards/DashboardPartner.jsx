@@ -251,72 +251,92 @@ const DashboardPartner = () => {
 
   const renderAddClientCard = () => (
     <div style={styles.card}>
-      <h3>Adicionar Novo Cliente</h3>
+      <div style={styles.cardHeader}>
+        <h3 style={styles.cardTitle}>➕ Adicionar Novo Cliente</h3>
+        <p style={styles.cardSubtitle}>Cadastre um novo cliente e gere o link de convite</p>
+      </div>
       <form onSubmit={handleAddClient} style={styles.form}>
-        <input
-          type="text"
-          placeholder="Nome do Cliente"
-          value={newClient.name}
-          onChange={(e) => setNewClient({ ...newClient, name: e.target.value })}
-          style={styles.input}
-          required
-        />
-        <input
-          type="text"
-          placeholder="CPF (11 digitos) ou CNPJ (14 digitos)"
-          value={newClient.document}
-          inputMode="numeric"
-          maxLength={DOCUMENT_LENGTH.cnpj}
-          onChange={(event) => {
-            const digitsOnly = event.target.value.replace(/\D/g, '');
-            const provisionalType = digitsOnly.length > DOCUMENT_LENGTH.cpf ? 'cnpj' : 'cpf';
-            const limit = DOCUMENT_LENGTH[provisionalType];
-            const limited = digitsOnly.slice(0, limit);
-            const resolvedType = limited.length > DOCUMENT_LENGTH.cpf ? 'cnpj' : 'cpf';
-            setNewClient((previous) => ({
-              ...previous,
-              document: limited,
-              documentType: resolvedType
-            }));
-          }}
-          style={styles.input}
-          required
-        />
-        <span style={styles.helperText}>
-          {newClient.documentType === 'cnpj'
-            ? `Documento identificado como CNPJ. Restam ${Math.max(DOCUMENT_LENGTH.cnpj - newClient.document.length, 0)} digitos.`
-            : `Documento identificado como CPF. Restam ${Math.max(DOCUMENT_LENGTH.cpf - newClient.document.length, 0)} digitos.`}
-        </span>
+        <div style={styles.inputGroup}>
+          <label style={styles.inputLabel}>Nome Completo do Cliente</label>
+          <input
+            type="text"
+            placeholder="Ex: João da Silva"
+            value={newClient.name}
+            onChange={(e) => setNewClient({ ...newClient, name: e.target.value })}
+            style={styles.input}
+            required
+          />
+        </div>
+        <div style={styles.inputGroup}>
+          <label style={styles.inputLabel}>CPF ou CNPJ</label>
+          <input
+            type="text"
+            placeholder="Digite apenas números"
+            value={newClient.document}
+            inputMode="numeric"
+            maxLength={DOCUMENT_LENGTH.cnpj}
+            onChange={(event) => {
+              const digitsOnly = event.target.value.replace(/\D/g, '');
+              const provisionalType = digitsOnly.length > DOCUMENT_LENGTH.cpf ? 'cnpj' : 'cpf';
+              const limit = DOCUMENT_LENGTH[provisionalType];
+              const limited = digitsOnly.slice(0, limit);
+              const resolvedType = limited.length > DOCUMENT_LENGTH.cpf ? 'cnpj' : 'cpf';
+              setNewClient((previous) => ({
+                ...previous,
+                document: limited,
+                documentType: resolvedType
+              }));
+            }}
+            style={styles.input}
+            required
+          />
+          <div style={styles.helperText}>
+            {newClient.documentType === 'cnpj'
+              ? `📋 CNPJ - Restam ${Math.max(DOCUMENT_LENGTH.cnpj - newClient.document.length, 0)} dígitos`
+              : `👤 CPF - Restam ${Math.max(DOCUMENT_LENGTH.cpf - newClient.document.length, 0)} dígitos`}
+          </div>
+        </div>
         <button type="submit" disabled={loading} style={styles.button}>
-          Adicionar Cliente
+          {loading ? '⏳ Processando...' : '🚀 Gerar Link de Convite'}
         </button>
       </form>
       {(clientFeedback || inviteLink) && (
         <div style={styles.feedbackBox}>
-          {clientFeedback && <p style={styles.feedbackText}>{clientFeedback}</p>}
+          {clientFeedback && (
+            <div style={styles.feedbackMessage}>
+              <span style={styles.feedbackIcon}>ℹ️</span>
+              <p style={styles.feedbackText}>{clientFeedback}</p>
+            </div>
+          )}
           {inviteLink && (
-            <div style={styles.inviteWrapper}>
-              <input
-                type="text"
-                readOnly
-                value={inviteLink}
-                style={styles.inviteInput}
-                onFocus={(event) => event.target.select()}
-              />
-              <button
-                type="button"
-                style={styles.copyButton}
-                onClick={async () => {
-                  try {
-                    await navigator.clipboard.writeText(inviteLink);
-                    setClientFeedback('Link copiado para a area de transferencia!');
-                  } catch (_error) {
-                    setClientFeedback('Nao foi possivel copiar automaticamente. Copie manualmente o link abaixo.');
-                  }
-                }}
-              >
-                Copiar
-              </button>
+            <div style={styles.inviteSection}>
+              <h4 style={styles.inviteTitle}>🔗 Link de Convite Gerado</h4>
+              <div style={styles.inviteWrapper}>
+                <input
+                  type="text"
+                  readOnly
+                  value={inviteLink}
+                  style={styles.inviteInput}
+                  onFocus={(event) => event.target.select()}
+                />
+                <button
+                  type="button"
+                  style={styles.copyButton}
+                  onClick={async () => {
+                    try {
+                      await navigator.clipboard.writeText(inviteLink);
+                      setClientFeedback('✅ Link copiado para a área de transferência!');
+                    } catch (_error) {
+                      setClientFeedback('⚠️ Não foi possível copiar automaticamente. Copie manualmente o link abaixo.');
+                    }
+                  }}
+                >
+                  📋 Copiar Link
+                </button>
+              </div>
+              <p style={styles.inviteInstructions}>
+                Envie este link para seu cliente completar o cadastro
+              </p>
             </div>
           )}
         </div>
@@ -326,63 +346,121 @@ const DashboardPartner = () => {
 
   const renderQuickActionsCard = () => (
     <div style={styles.card}>
-      <h3>Ações Rápidas</h3>
-      <ul style={styles.quickActionsList}>
-        <li style={styles.quickActionItem}>
-          <button type="button" style={styles.quickActionButton}>
-            Gerar link de convite
-          </button>
-        </li>
-        <li style={styles.quickActionItem}>
-          <button type="button" style={styles.quickActionButton}>
-            Enviar lembrete de pagamento
-          </button>
-        </li>
-        <li style={styles.quickActionItem}>
-          <button type="button" style={styles.quickActionButton}>
-            Exportar relatórios
-          </button>
-        </li>
-      </ul>
+      <div style={styles.cardHeader}>
+        <h3 style={styles.cardTitle}>⚡ Ações Rápidas</h3>
+        <p style={styles.cardSubtitle}>Ferramentas para gerenciar seus clientes</p>
+      </div>
+      <div style={styles.quickActionsGrid}>
+        <button type="button" style={styles.quickActionButton}>
+          <span style={styles.actionIcon}>🔗</span>
+          <div style={styles.actionContent}>
+            <strong>Gerar Link</strong>
+            <small>Criar novo convite</small>
+          </div>
+        </button>
+        <button type="button" style={styles.quickActionButton}>
+          <span style={styles.actionIcon}>📧</span>
+          <div style={styles.actionContent}>
+            <strong>Enviar Lembrete</strong>
+            <small>Pagamentos pendentes</small>
+          </div>
+        </button>
+        <button type="button" style={styles.quickActionButton}>
+          <span style={styles.actionIcon}>📊</span>
+          <div style={styles.actionContent}>
+            <strong>Relatórios</strong>
+            <small>Exportar dados</small>
+          </div>
+        </button>
+        <button type="button" style={styles.quickActionButton}>
+          <span style={styles.actionIcon}>📱</span>
+          <div style={styles.actionContent}>
+            <strong>WhatsApp</strong>
+            <small>Contato direto</small>
+          </div>
+        </button>
+      </div>
     </div>
   );
 
   const renderClientsTable = () => (
     <section style={styles.card}>
-      <h3>Meus Clientes</h3>
-      <table style={styles.table}>
-        <thead>
-          <tr>
-            <th style={styles.th}>Nome</th>
-            <th style={styles.th}>Documento</th>
-            <th style={styles.th}>Status</th>
-            <th style={styles.th}>Desde</th>
-          </tr>
-        </thead>
-        <tbody>
-          {clients.map((item) => (
-            <tr key={item.client_id}>
-              <td style={styles.td}>{item.profile.name}</td>
-              <td style={styles.td}>{formatDocumentWithLabel(item.profile.document, item.profile.document_type)}</td>
-              <td style={styles.td}>
-                <span style={styles.statusBadge(item.profile.onboarding_completed)}>
-                  {item.profile.onboarding_completed ? 'Ativo' : 'Pendente'}
-                </span>
-              </td>
-              <td style={styles.td}>
-                {item.created_at ? new Date(item.created_at).toLocaleDateString('pt-BR') : 'N/D'}
-              </td>
-            </tr>
-          ))}
-          {!clients.length && (
+      <div style={styles.cardHeader}>
+        <h3 style={styles.cardTitle}>👥 Meus Clientes</h3>
+        <p style={styles.cardSubtitle}>Lista completa dos seus clientes cadastrados</p>
+      </div>
+      <div style={styles.tableContainer}>
+        <table style={styles.table}>
+          <thead>
             <tr>
-              <td style={styles.emptyState} colSpan={4}>
-                Nenhum cliente cadastrado ainda.
-              </td>
+              <th style={styles.th}>Cliente</th>
+              <th style={styles.th}>Documento</th>
+              <th style={styles.th}>Status</th>
+              <th style={styles.th}>Cadastrado em</th>
+              <th style={styles.th}>Ações</th>
             </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {clients.map((item) => (
+              <tr key={item.client_id} style={styles.tableRow}>
+                <td style={styles.td}>
+                  <div style={styles.clientInfo}>
+                    <div style={styles.clientAvatar}>
+                      {item.profile.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                      <strong>{item.profile.name}</strong>
+                      <br />
+                      <small style={styles.clientType}>
+                        {item.profile.document_type === 'cnpj' ? '🏢 MEI' : '👤 Autônomo'}
+                      </small>
+                    </div>
+                  </div>
+                </td>
+                <td style={styles.td}>
+                  <code style={styles.documentCode}>
+                    {formatDocumentWithLabel(item.profile.document, item.profile.document_type)}
+                  </code>
+                </td>
+                <td style={styles.td}>
+                  <span style={styles.statusBadge(item.profile.onboarding_completed)}>
+                    {item.profile.onboarding_completed ? '✅ Ativo' : '⏳ Pendente'}
+                  </span>
+                </td>
+                <td style={styles.td}>
+                  <span style={styles.dateText}>
+                    {item.created_at ? new Date(item.created_at).toLocaleDateString('pt-BR') : 'N/D'}
+                  </span>
+                </td>
+                <td style={styles.td}>
+                  <div style={styles.actionButtons}>
+                    <button style={styles.actionBtn} title="Visualizar">
+                      👁️
+                    </button>
+                    <button style={styles.actionBtn} title="Editar">
+                      ✏️
+                    </button>
+                    <button style={styles.actionBtn} title="Contatar">
+                      📱
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+            {!clients.length && (
+              <tr>
+                <td style={styles.emptyState} colSpan={5}>
+                  <div style={styles.emptyStateContent}>
+                    <span style={styles.emptyIcon}>👥</span>
+                    <h4>Nenhum cliente cadastrado ainda</h4>
+                    <p>Comece adicionando seu primeiro cliente usando o formulário acima</p>
+                  </div>
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </section>
   );
 
@@ -411,26 +489,26 @@ const DashboardPartner = () => {
             style={{ ...styles.navLink, ...(activeSection === 'overview' ? styles.activeNavLink : {}) }}
             onClick={() => setActiveSection('overview')}
           >
-            <span>[D]</span> Dashboard Parceiro
+            <span>📊</span> Dashboard
           </button>
           <button
             style={{ ...styles.navLink, ...(activeSection === 'clients' ? styles.activeNavLink : {}) }}
             onClick={() => setActiveSection('clients')}
           >
-            <span>[C]</span> Meus Clientes
+            <span>👥</span> Meus Clientes
           </button>
           <button
             style={{ ...styles.navLink, ...(activeSection === 'commissions' ? styles.activeNavLink : {}) }}
             onClick={() => setActiveSection('commissions')}
           >
-            <span>[$]</span> Minhas Comissões
+            <span>💰</span> Minhas Comissões
           </button>
         </nav>
         <div
           style={styles.logoutButton}
           onClick={() => supabase.auth.signOut().then(() => navigate('/'))}
         >
-          <span>[Sair]</span> Sair
+          <span>🚪</span> Sair
         </div>
       </aside>
 
@@ -526,48 +604,72 @@ const StatCard = ({ title, value, icon }) => (
 
 const styles = {
   dashboardContainer: { display: 'flex', minHeight: '100vh', fontFamily: '"Inter", sans-serif', backgroundColor: '#f8f9fa' },
-  sidebar: { width: '250px', backgroundColor: '#fff', padding: '30px 20px', display: 'flex', flexDirection: 'column', borderRight: '1px solid #dee2e6' },
-  logo: { height: '50px', marginBottom: '40px', alignSelf: 'center' },
-  nav: { display: 'flex', flexDirection: 'column', gap: '10px', flexGrow: 1 },
-  navLink: { textDecoration: 'none', color: '#495057', padding: '12px 15px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '12px', fontWeight: 500, transition: 'all 0.2s', backgroundColor: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left' },
-  activeNavLink: { backgroundColor: '#e9ecef', color: '#007bff' },
-  logoutButton: { padding: '12px 15px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '12px', fontWeight: 500, color: '#dc3545', cursor: 'pointer' },
-  mainContent: { flex: 1, padding: '40px', overflowY: 'auto' },
+  sidebar: { width: '280px', backgroundColor: '#fff', padding: '30px 20px', display: 'flex', flexDirection: 'column', borderRight: '1px solid #e5e7eb', boxShadow: '2px 0 10px rgba(0,0,0,0.05)' },
+  logo: { height: '60px', marginBottom: '40px', alignSelf: 'center' },
+  nav: { display: 'flex', flexDirection: 'column', gap: '8px', flexGrow: 1 },
+  navLink: { textDecoration: 'none', color: '#6b7280', padding: '14px 16px', borderRadius: '10px', display: 'flex', alignItems: 'center', gap: '12px', fontWeight: 500, transition: 'all 0.3s ease', backgroundColor: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left', fontSize: '15px' },
+  activeNavLink: { backgroundColor: '#eff6ff', color: '#2563eb', border: '1px solid #dbeafe' },
+  logoutButton: { padding: '14px 16px', borderRadius: '10px', display: 'flex', alignItems: 'center', gap: '12px', fontWeight: 500, color: '#dc2626', cursor: 'pointer', transition: 'all 0.3s ease', backgroundColor: '#fef2f2', border: '1px solid #fecaca' },
+  mainContent: { flex: 1, padding: '40px', overflowY: 'auto', backgroundColor: '#f8f9fa' },
   header: { marginBottom: '40px' },
-  statsGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '20px', marginBottom: '30px' },
-  statCard: { display: 'flex', alignItems: 'center', gap: '20px', backgroundColor: '#fff', padding: '25px', borderRadius: '12px', boxShadow: '0 4px 20px rgba(0,0,0,0.05)' },
-  statIcon: { fontSize: '2rem' },
-  statValue: { fontSize: '24px', fontWeight: 'bold', margin: 0 },
-  statTitle: { fontSize: '14px', color: '#6c757d', margin: 0 },
-  grid2Cols: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px', marginBottom: '30px' },
-  gridSingle: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px', marginBottom: '30px' },
-  card: { backgroundColor: '#fff', padding: '30px', borderRadius: '12px', boxShadow: '0 4px 20px rgba(0,0,0,0.05)' },
-  form: { display: 'flex', flexDirection: 'column', gap: '15px' },
-  input: { padding: '12px 15px', fontSize: '16px', border: '1px solid #ced4da', borderRadius: '8px' },
-  helperText: { fontSize: '12px', color: '#6c757d', marginTop: '-6px' },
-  button: { padding: '12px', fontSize: '16px', fontWeight: 'bold', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' },
-  quickActionsList: { listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '12px' },
-  quickActionItem: { display: 'flex' },
-  quickActionButton: { flex: 1, padding: '12px', borderRadius: '8px', border: '1px solid #d1d5db', backgroundColor: '#f8f9fa', cursor: 'pointer', fontWeight: 500, color: '#1f2937' },
-  feedbackBox: { marginTop: '16px', padding: '12px', borderRadius: '8px', backgroundColor: '#f8f9ff', border: '1px solid #dbe4ff', display: 'flex', flexDirection: 'column', gap: '8px' },
-  feedbackText: { margin: 0, fontSize: '14px', color: '#1f2937' },
-  inviteWrapper: { display: 'flex', gap: '8px', alignItems: 'center' },
-  inviteInput: { flex: 1, padding: '10px', borderRadius: '6px', border: '1px solid #ced4da', fontSize: '14px' },
-  copyButton: { padding: '10px 16px', borderRadius: '6px', border: 'none', backgroundColor: '#0d6efd', color: '#fff', fontWeight: 600, cursor: 'pointer' },
-  table: { width: '100%', borderCollapse: 'collapse' },
-  th: { textAlign: 'left', padding: '15px', backgroundColor: '#f8f9fa', fontWeight: '600', color: '#6c757d' },
-  td: { padding: '15px', borderBottom: '1px solid #dee2e6', color: '#495057' },
-  emptyState: { padding: '18px', textAlign: 'center', color: '#6c757d' },
+  statsGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '24px', marginBottom: '40px' },
+  statCard: { display: 'flex', alignItems: 'center', gap: '20px', backgroundColor: '#fff', padding: '28px', borderRadius: '16px', boxShadow: '0 4px 25px rgba(0,0,0,0.08)', border: '1px solid #f3f4f6', transition: 'all 0.3s ease' },
+  statIcon: { fontSize: '2.5rem', opacity: 0.8 },
+  statValue: { fontSize: '28px', fontWeight: 'bold', margin: 0, color: '#1f2937' },
+  statTitle: { fontSize: '14px', color: '#6b7280', margin: 0, fontWeight: 500 },
+  grid2Cols: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '24px', marginBottom: '40px' },
+  gridSingle: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '24px', marginBottom: '40px' },
+  card: { backgroundColor: '#fff', padding: '32px', borderRadius: '16px', boxShadow: '0 4px 25px rgba(0,0,0,0.08)', border: '1px solid #f3f4f6' },
+  cardHeader: { marginBottom: '24px' },
+  cardTitle: { fontSize: '20px', fontWeight: 'bold', color: '#1f2937', margin: '0 0 8px 0' },
+  cardSubtitle: { fontSize: '14px', color: '#6b7280', margin: 0 },
+  form: { display: 'flex', flexDirection: 'column', gap: '20px' },
+  inputGroup: { display: 'flex', flexDirection: 'column', gap: '8px' },
+  inputLabel: { fontSize: '14px', fontWeight: '600', color: '#374151', marginBottom: '4px' },
+  input: { padding: '14px 16px', fontSize: '16px', border: '2px solid #e5e7eb', borderRadius: '10px', transition: 'all 0.3s ease', backgroundColor: '#fff', '&:focus': { borderColor: '#3b82f6', outline: 'none', boxShadow: '0 0 0 3px rgba(59, 130, 246, 0.1)' } },
+  helperText: { fontSize: '13px', color: '#6b7280', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '6px' },
+  button: { padding: '14px 24px', fontSize: '16px', fontWeight: '600', backgroundColor: '#3b82f6', color: 'white', border: 'none', borderRadius: '10px', cursor: 'pointer', transition: 'all 0.3s ease', '&:hover': { backgroundColor: '#2563eb', transform: 'translateY(-1px)' }, '&:disabled': { backgroundColor: '#9ca3af', cursor: 'not-allowed' } },
+  quickActionsGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '16px' },
+  quickActionButton: { padding: '20px 16px', borderRadius: '12px', border: '2px solid #f3f4f6', backgroundColor: '#fff', cursor: 'pointer', transition: 'all 0.3s ease', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', '&:hover': { borderColor: '#3b82f6', backgroundColor: '#eff6ff', transform: 'translateY(-2px)' } },
+  actionIcon: { fontSize: '24px' },
+  actionContent: { textAlign: 'center', 'strong': { display: 'block', fontSize: '14px', fontWeight: '600', color: '#1f2937', marginBottom: '4px' }, 'small': { fontSize: '12px', color: '#6b7280' } },
+  feedbackBox: { marginTop: '20px', padding: '20px', borderRadius: '12px', backgroundColor: '#f0f9ff', border: '2px solid #bae6fd', display: 'flex', flexDirection: 'column', gap: '16px' },
+  feedbackMessage: { display: 'flex', alignItems: 'center', gap: '12px' },
+  feedbackIcon: { fontSize: '18px' },
+  feedbackText: { margin: 0, fontSize: '14px', color: '#1e40af', fontWeight: '500' },
+  inviteSection: { backgroundColor: '#f8fafc', padding: '16px', borderRadius: '8px', border: '1px solid #e2e8f0' },
+  inviteTitle: { fontSize: '16px', fontWeight: '600', color: '#1f2937', margin: '0 0 12px 0' },
+  inviteWrapper: { display: 'flex', gap: '12px', alignItems: 'center' },
+  inviteInput: { flex: 1, padding: '12px 16px', borderRadius: '8px', border: '2px solid #d1d5db', fontSize: '14px', backgroundColor: '#fff', fontFamily: 'monospace' },
+  copyButton: { padding: '12px 20px', borderRadius: '8px', border: 'none', backgroundColor: '#059669', color: '#fff', fontWeight: '600', cursor: 'pointer', transition: 'all 0.3s ease', '&:hover': { backgroundColor: '#047857' } },
+  inviteInstructions: { fontSize: '13px', color: '#6b7280', margin: '8px 0 0 0', fontStyle: 'italic' },
+  tableContainer: { overflowX: 'auto', borderRadius: '12px', border: '1px solid #e5e7eb' },
+  table: { width: '100%', borderCollapse: 'collapse', backgroundColor: '#fff' },
+  tableRow: { transition: 'all 0.2s ease', '&:hover': { backgroundColor: '#f9fafb' } },
+  th: { textAlign: 'left', padding: '16px', backgroundColor: '#f8fafc', fontWeight: '600', color: '#374151', fontSize: '14px', borderBottom: '2px solid #e5e7eb' },
+  td: { padding: '16px', borderBottom: '1px solid #f3f4f6', color: '#374151' },
+  clientInfo: { display: 'flex', alignItems: 'center', gap: '12px' },
+  clientAvatar: { width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#3b82f6', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '16px' },
+  clientType: { color: '#6b7280', fontSize: '12px' },
+  documentCode: { backgroundColor: '#f3f4f6', padding: '4px 8px', borderRadius: '6px', fontFamily: 'monospace', fontSize: '12px', color: '#374151' },
+  dateText: { color: '#6b7280', fontSize: '14px' },
+  actionButtons: { display: 'flex', gap: '8px' },
+  actionBtn: { padding: '6px 8px', borderRadius: '6px', border: '1px solid #d1d5db', backgroundColor: '#fff', cursor: 'pointer', transition: 'all 0.2s ease', fontSize: '14px', '&:hover': { backgroundColor: '#f3f4f6', borderColor: '#9ca3af' } },
+  emptyState: { padding: '40px', textAlign: 'center', color: '#6b7280' },
+  emptyStateContent: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' },
+  emptyIcon: { fontSize: '48px', opacity: 0.5 },
   statusBadge: (isCompleted) => ({
-    padding: '5px 10px',
-    borderRadius: '12px',
+    padding: '6px 12px',
+    borderRadius: '20px',
     fontSize: '12px',
-    fontWeight: 'bold',
-    backgroundColor: isCompleted ? '#d1e7dd' : '#fff3cd',
-    color: isCompleted ? '#0f5132' : '#664d03'
+    fontWeight: '600',
+    backgroundColor: isCompleted ? '#dcfce7' : '#fef3c7',
+    color: isCompleted ? '#166534' : '#92400e',
+    border: isCompleted ? '1px solid #bbf7d0' : '1px solid #fde68a'
   }),
   centered: { display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' },
-  spinner: { border: '4px solid #f3f3f3', borderTop: '4px solid #007bff', borderRadius: '50%', width: '40px', height: '40px', animation: 'spin 1s linear infinite' }
+  spinner: { border: '4px solid #f3f4f6', borderTop: '4px solid #3b82f6', borderRadius: '50%', width: '40px', height: '40px', animation: 'spin 1s linear infinite' },
+  '@keyframes spin': { '0%': { transform: 'rotate(0deg)' }, '100%': { transform: 'rotate(360deg)' } }
 };
 
 export default DashboardPartner;

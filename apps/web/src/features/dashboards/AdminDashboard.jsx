@@ -5,6 +5,13 @@ import { useNavigate } from 'react-router-dom';
 import { decryptData } from '../../utils/encryption';
 import logo from '../../assets/logo.png';
 
+// Importar componentes NFSe
+import CertificadosAdminPage from '../admin/nfse/CertificadosAdminPage';
+import EmissoesAdminPage from '../admin/nfse/EmissoesAdminPage';
+import RelatoriosAdminPage from '../admin/nfse/RelatoriosAdminPage';
+import ConfiguracoesAdminPage from '../admin/nfse/ConfiguracoesAdminPage';
+import LogsAdminPage from '../admin/nfse/LogsAdminPage';
+
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL ?? process.env.REACT_APP_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY ?? process.env.REACT_APP_SUPABASE_ANON_KEY;
 const supabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey);
@@ -111,6 +118,16 @@ const AdminDashboard = () => {
         return <UsersTable users={users} formatDocument={formatDocument} />;
       case 'partners':
         return <PartnersTable partners={partners} formatDocument={formatDocument} />;
+      case 'nfse-certificados':
+        return <CertificadosAdminPage />;
+      case 'nfse-emissoes':
+        return <EmissoesAdminPage />;
+      case 'nfse-relatorios':
+        return <RelatoriosAdminPage />;
+      case 'nfse-configuracoes':
+        return <ConfiguracoesAdminPage />;
+      case 'nfse-logs':
+        return <LogsAdminPage />;
       case 'overview':
       default:
         return <Overview stats={stats} users={users} />;
@@ -125,6 +142,14 @@ const AdminDashboard = () => {
           <TabButton title="Visão Geral" name="overview" activeTab={activeTab} setActiveTab={setActiveTab} icon="📊" />
           <TabButton title="Usuários" name="users" activeTab={activeTab} setActiveTab={setActiveTab} icon="👥" />
           <TabButton title="Parceiros" name="partners" activeTab={activeTab} setActiveTab={setActiveTab} icon="🤝" />
+          <div style={styles.nfseSection}>
+            <h4 style={styles.sectionTitle}>NFSe</h4>
+            <TabButton title="Certificados" name="nfse-certificados" activeTab={activeTab} setActiveTab={setActiveTab} icon="🔐" />
+            <TabButton title="Emissões" name="nfse-emissoes" activeTab={activeTab} setActiveTab={setActiveTab} icon="📊" />
+            <TabButton title="Relatórios" name="nfse-relatorios" activeTab={activeTab} setActiveTab={setActiveTab} icon="📈" />
+            <TabButton title="Configurações" name="nfse-configuracoes" activeTab={activeTab} setActiveTab={setActiveTab} icon="⚙️" />
+            <TabButton title="Logs" name="nfse-logs" activeTab={activeTab} setActiveTab={setActiveTab} icon="🔍" />
+          </div>
         </nav>
         <div style={styles.logoutButton} onClick={() => supabase.auth.signOut().then(() => navigate('/'))}>
           <span>🚪</span> Sair
@@ -209,6 +234,8 @@ const styles = {
     th: { textAlign: 'left', padding: '15px', backgroundColor: '#f8f9fa', fontWeight: '600', color: '#6c757d' },
     td: { padding: '15px', borderBottom: '1px solid #dee2e6', color: '#495057' },
     statusBadge: (isCompleted) => ({ padding: '5px 10px', borderRadius: '12px', fontSize: '12px', fontWeight: 'bold', backgroundColor: isCompleted ? '#d1e7dd' : '#fff3cd', color: isCompleted ? '#0f5132' : '#664d03' }),
+    nfseSection: { marginTop: '30px', paddingTop: '20px', borderTop: '1px solid #dee2e6' },
+    sectionTitle: { fontSize: '12px', fontWeight: '600', color: '#6c757d', margin: '0 0 15px 0', textTransform: 'uppercase', letterSpacing: '0.5px' },
     centered: { display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' },
     spinner: { border: '4px solid #f3f3f3', borderTop: '4px solid #007bff', borderRadius: '50%', width: '40px', height: '40px', animation: 'spin 1s linear infinite' },
     '@keyframes spin': { '0%': { transform: 'rotate(0deg)' }, '100%': { transform: 'rotate(360deg)' } },

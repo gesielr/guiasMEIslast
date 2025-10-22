@@ -14,6 +14,13 @@ import EmitirGpsPage from "./features/gps/EmitirGpsPage";
 import PaymentPage from "./features/pagamentos/PaymentPage";
 import PoliticaPrivacidade from "./features/legal/PoliticaPrivacidade";
 
+// Importar páginas NFSe administrativas
+import CertificadosAdminPage from "./features/admin/nfse/CertificadosAdminPage";
+import EmissoesAdminPage from "./features/admin/nfse/EmissoesAdminPage";
+import RelatoriosAdminPage from "./features/admin/nfse/RelatoriosAdminPage";
+import ConfiguracoesAdminPage from "./features/admin/nfse/ConfiguracoesAdminPage";
+import LogsAdminPage from "./features/admin/nfse/LogsAdminPage";
+
 export default function App() {
   return (
     <Routes>
@@ -35,6 +42,13 @@ export default function App() {
       <Route path="/dashboard/admin" element={<AdminDashboard />} />
       <Route path="/parceiro/dashboard" element={<DashboardPartner />} />
       <Route path="/admin" element={<AdminDashboard />} />
+      
+      {/* Rotas NFSe Administrativas - Acesso apenas para administradores */}
+      <Route path="/admin/nfse/certificados" element={<CertificadosAdminPage />} />
+      <Route path="/admin/nfse/emissoes" element={<EmissoesAdminPage />} />
+      <Route path="/admin/nfse/relatorios" element={<RelatoriosAdminPage />} />
+      <Route path="/admin/nfse/configuracoes" element={<ConfiguracoesAdminPage />} />
+      <Route path="/admin/nfse/logs" element={<LogsAdminPage />} />
     </Routes>
   );
 }

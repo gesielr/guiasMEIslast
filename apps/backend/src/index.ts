@@ -4,10 +4,12 @@ import fastifySensible from "@fastify/sensible";
 import { env } from "./env";
 import { registerAuthRoutes } from "../routes/auth";
 import { registerDashboardRoutes } from "../routes/dashboard";
-import { registerNfseRoutes } from "../routes/nfse";
+import { registerNfseController } from "./nfse/controllers/nfse.controller";
+import { startScheduler } from "./nfse/workers/scheduler";
 import { registerGpsRoutes } from "../routes/gps";
 import { registerPaymentRoutes } from "../routes/payments";
 import { registerWhatsappRoutes } from "../routes/whatsapp";
+import { testSupabaseConnection } from "./test-supabase";
 
 async function buildServer() {
   const app = Fastify({
@@ -17,14 +19,20 @@ async function buildServer() {
   });
 
   await app.register(fastifyCors, {
-    origin: true,
-    credentials: true
+    origin: "*",
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
   });
   await app.register(fastifySensible);
 
+  app.get("/health", async () => {
+    return { status: "healthy" };
+  });
+
   await registerAuthRoutes(app);
   await registerDashboardRoutes(app);
-  await registerNfseRoutes(app);
+  await registerNfseController(app);
   await registerGpsRoutes(app);
   await registerPaymentRoutes(app);
   await registerWhatsappRoutes(app);
@@ -33,13 +41,21 @@ async function buildServer() {
 }
 
 buildServer()
-  .then((app) => {
-    app.listen({ port: env.PORT, host: "0.0.0.0" }, (error, address) => {
+  .then(async (app) => {
+    app.listen({ port: env.PORT, host: "127.0.0.1" }, (error, address) => {
       if (error) {
         app.log.error(error, "Falha ao iniciar servidor");
         process.exit(1);
       }
       app.log.info(`API GuiasMEI escutando em ${address}`);
+      if (env.NODE_ENV !== 'test') {
+        try {
+          startScheduler();
+          app.log.info('NFSe scheduler started');
+        } catch (err) {
+          app.log.error(err, 'Failed to start NFSe scheduler');
+        }
+      }
     });
   })
   .catch((error) => {

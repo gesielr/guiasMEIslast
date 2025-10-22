@@ -16,6 +16,18 @@ const envSchema = z.object({
     .default("Olá! Sou a IA do GuiasMEI. Estou aqui para te ajudar com suas guias e notas fiscais."),
   STRIPE_PRICE_ID: z.string().optional(),
   STRIPE_WEBHOOK_SECRET: z.string().optional()
+  ,
+  NFSE_ENV: z.enum(["pr", "prod"]).default("pr"),
+  NFSE_CONTRIBUINTES_BASE_URL: z.string().url().optional(),
+  NFSE_PARAMETROS_BASE_URL: z.string().url().optional(),
+  NFSE_DANFSE_BASE_URL: z.string().url().optional(),
+  NFSE_CERT_PFX_PATH: z.string().optional(),
+  NFSE_CERT_PFX_BASE64: z.string().optional(),
+  NFSE_CERT_PFX_PASS: z.string().optional(),
+  NFSE_CERT_PKCS11_LIBRARY: z.string().optional(),
+  NFSE_CERT_PKCS11_SLOT: z.string().optional(),
+  NFSE_CERT_PKCS11_PIN: z.string().optional(),
+  NFSE_CREDENTIAL_SECRET: z.string().min(16, "NFSE_CREDENTIAL_SECRET must be at least 16 characters")
 });
 
 export const env = envSchema.parse(process.env);

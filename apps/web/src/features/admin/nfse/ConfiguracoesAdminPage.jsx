@@ -1,4 +1,4 @@
-// src/features/admin/nfse/ConfiguracoesAdminPage.jsx
+﻿// src/features/admin/nfse/ConfiguracoesAdminPage.jsx
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../../supabase/client';
 import { useNavigate } from 'react-router-dom';
@@ -51,7 +51,7 @@ const ConfiguracoesAdminPage = () => {
     try {
       setLoading(true);
       
-      // Simular carregamento de configurações (em produção, buscar do banco)
+      // Simular carregamento de configuraÃ§Ãµes (em produÃ§Ã£o, buscar do banco)
       const configsSimuladas = {
         adn: {
           contribuintesUrl: 'https://preprod.nfse.gov.br/contribuintes',
@@ -61,7 +61,7 @@ const ConfiguracoesAdminPage = () => {
         },
         mTLS: {
           certificadoPath: '/certs/sistema.pfx',
-          senha: '••••••••',
+          senha: 'â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢',
           tipo: 'PFX'
         },
         retry: {
@@ -78,7 +78,7 @@ const ConfiguracoesAdminPage = () => {
 
       setConfiguracoes(configsSimuladas);
     } catch (err) {
-      setError('Erro ao carregar configurações: ' + err.message);
+      setError('Erro ao carregar configuraÃ§Ãµes: ' + err.message);
     } finally {
       setLoading(false);
     }
@@ -90,12 +90,12 @@ const ConfiguracoesAdminPage = () => {
       setError('');
       setSuccess('');
 
-      // Simular salvamento (em produção, salvar no banco)
+      // Simular salvamento (em produÃ§Ã£o, salvar no banco)
       await new Promise(resolve => setTimeout(resolve, 1000));
 
-      setSuccess('Configurações salvas com sucesso!');
+      setSuccess('ConfiguraÃ§Ãµes salvas com sucesso!');
     } catch (err) {
-      setError('Erro ao salvar configurações: ' + err.message);
+      setError('Erro ao salvar configuraÃ§Ãµes: ' + err.message);
     } finally {
       setSaving(false);
     }
@@ -105,7 +105,7 @@ const ConfiguracoesAdminPage = () => {
     try {
       setTestResults({...testResults, [tipo]: 'testando'});
       
-      // Simular teste de conexão
+      // Simular teste de conexÃ£o
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       const sucesso = Math.random() > 0.3; // 70% de chance de sucesso
@@ -130,13 +130,13 @@ const ConfiguracoesAdminPage = () => {
     if (!status) return null;
     
     if (status === 'testando') {
-      return <span style={styles.testing}>🔄 Testando...</span>;
+      return <span style={styles.testing}>ðŸ”„ Testando...</span>;
     }
     if (status === 'sucesso') {
-      return <span style={styles.success}>✅ Conectado</span>;
+      return <span style={styles.statusSuccess}>âœ… Conectado</span>;
     }
     if (status === 'erro') {
-      return <span style={styles.error}>❌ Erro na conexão</span>;
+      return <span style={styles.statusError}>âŒ Erro na conexÃ£o</span>;
     }
   };
 
@@ -150,41 +150,41 @@ const ConfiguracoesAdminPage = () => {
         <img src={logo} alt="GuiasMEI Logo" style={styles.logo} />
         <nav style={styles.nav}>
           <button style={styles.navLink} onClick={() => navigate('/dashboard/admin')}>
-            <span>🏠</span> Dashboard
+            <span>ðŸ </span> Dashboard
           </button>
           <button style={styles.navLink} onClick={() => navigate('/admin/nfse/certificados')}>
-            <span>🔐</span> Certificados
+            <span>ðŸ”</span> Certificados
           </button>
           <button style={styles.navLink} onClick={() => navigate('/admin/nfse/emissoes')}>
-            <span>📊</span> Emissões
+            <span>ðŸ“Š</span> EmissÃµes
           </button>
           <button style={styles.navLink} onClick={() => navigate('/admin/nfse/relatorios')}>
-            <span>📈</span> Relatórios
+            <span>ðŸ“ˆ</span> RelatÃ³rios
           </button>
           <button style={{...styles.navLink, ...styles.activeNavLink}}>
-            <span>⚙️</span> Configurações
+            <span>âš™ï¸</span> ConfiguraÃ§Ãµes
           </button>
           <button style={styles.navLink} onClick={() => navigate('/admin/nfse/logs')}>
-            <span>🔍</span> Logs
+            <span>ðŸ”</span> Logs
           </button>
         </nav>
         <div style={styles.logoutButton} onClick={() => supabase.auth.signOut().then(() => navigate('/'))}>
-          <span>🚪</span> Sair
+          <span>ðŸšª</span> Sair
         </div>
       </aside>
 
       <main style={styles.mainContent}>
         <header style={styles.header}>
-          <h2>Configurações do Sistema NFSe</h2>
-          <p>Gerenciamento de integrações e configurações do sistema</p>
+          <h2>ConfiguraÃ§Ãµes do Sistema NFSe</h2>
+          <p>Gerenciamento de integraÃ§Ãµes e configuraÃ§Ãµes do sistema</p>
         </header>
 
         {error && <div style={styles.error}>{error}</div>}
         {success && <div style={styles.success}>{success}</div>}
 
-        {/* Configurações ADN */}
+        {/* ConfiguraÃ§Ãµes ADN */}
         <div style={styles.configCard}>
-          <h3>🌐 Configurações ADN</h3>
+          <h3>ðŸŒ ConfiguraÃ§Ãµes ADN</h3>
           <div style={styles.configGrid}>
             <div style={styles.configGroup}>
               <label style={styles.configLabel}>Ambiente:</label>
@@ -193,8 +193,8 @@ const ConfiguracoesAdminPage = () => {
                 onChange={(e) => handleChange('adn', 'ambiente', e.target.value)}
                 style={styles.configInput}
               >
-                <option value="pr">Pré-produção</option>
-                <option value="prod">Produção</option>
+                <option value="pr">PrÃ©-produÃ§Ã£o</option>
+                <option value="prod">ProduÃ§Ã£o</option>
               </select>
             </div>
             <div style={styles.configGroup}>
@@ -215,7 +215,7 @@ const ConfiguracoesAdminPage = () => {
               {getTestStatus('contribuintes')}
             </div>
             <div style={styles.configGroup}>
-              <label style={styles.configLabel}>URL Parâmetros:</label>
+              <label style={styles.configLabel}>URL ParÃ¢metros:</label>
               <input
                 type="url"
                 value={configuracoes.adn.parametrosUrl}
@@ -251,9 +251,9 @@ const ConfiguracoesAdminPage = () => {
           </div>
         </div>
 
-        {/* Configurações mTLS */}
+        {/* ConfiguraÃ§Ãµes mTLS */}
         <div style={styles.configCard}>
-          <h3>🔐 Certificado mTLS do Sistema</h3>
+          <h3>ðŸ” Certificado mTLS do Sistema</h3>
           <div style={styles.configGrid}>
             <div style={styles.configGroup}>
               <label style={styles.configLabel}>Tipo de Certificado:</label>
@@ -283,7 +283,7 @@ const ConfiguracoesAdminPage = () => {
                 value={configuracoes.mTLS.senha}
                 onChange={(e) => handleChange('mTLS', 'senha', e.target.value)}
                 style={styles.configInput}
-                placeholder="••••••••"
+                placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
               />
             </div>
             <div style={styles.configGroup}>
@@ -298,12 +298,12 @@ const ConfiguracoesAdminPage = () => {
           </div>
         </div>
 
-        {/* Configurações de Retry */}
+        {/* ConfiguraÃ§Ãµes de Retry */}
         <div style={styles.configCard}>
-          <h3>🔄 Políticas de Retry</h3>
+          <h3>ðŸ”„ PolÃ­ticas de Retry</h3>
           <div style={styles.configGrid}>
             <div style={styles.configGroup}>
-              <label style={styles.configLabel}>Máximo de Tentativas:</label>
+              <label style={styles.configLabel}>MÃ¡ximo de Tentativas:</label>
               <input
                 type="number"
                 min="1"
@@ -337,9 +337,9 @@ const ConfiguracoesAdminPage = () => {
           </div>
         </div>
 
-        {/* Configurações de Monitoramento */}
+        {/* ConfiguraÃ§Ãµes de Monitoramento */}
         <div style={styles.configCard}>
-          <h3>📊 Monitoramento e Alertas</h3>
+          <h3>ðŸ“Š Monitoramento e Alertas</h3>
           <div style={styles.configGrid}>
             <div style={styles.configGroup}>
               <label style={styles.configLabel}>
@@ -364,7 +364,7 @@ const ConfiguracoesAdminPage = () => {
               </label>
             </div>
             <div style={styles.configGroup}>
-              <label style={styles.configLabel}>Nível de Log:</label>
+              <label style={styles.configLabel}>NÃ­vel de Log:</label>
               <select 
                 value={configuracoes.monitoramento.logLevel}
                 onChange={(e) => handleChange('monitoramento', 'logLevel', e.target.value)}
@@ -381,43 +381,43 @@ const ConfiguracoesAdminPage = () => {
 
         {/* Status do Sistema */}
         <div style={styles.statusCard}>
-          <h3>🏥 Status do Sistema</h3>
+          <h3>ðŸ¥ Status do Sistema</h3>
           <div style={styles.statusGrid}>
             <div style={styles.statusItem}>
               <span style={styles.statusLabel}>ADN Contribuintes:</span>
-              <span style={styles.statusValue}>🟢 Online</span>
+              <span style={styles.statusValue}>ðŸŸ¢ Online</span>
             </div>
             <div style={styles.statusItem}>
-              <span style={styles.statusLabel}>ADN Parâmetros:</span>
-              <span style={styles.statusValue}>🟢 Online</span>
+              <span style={styles.statusLabel}>ADN ParÃ¢metros:</span>
+              <span style={styles.statusValue}>ðŸŸ¢ Online</span>
             </div>
             <div style={styles.statusItem}>
               <span style={styles.statusLabel}>ADN DANFSe:</span>
-              <span style={styles.statusValue}>🟢 Online</span>
+              <span style={styles.statusValue}>ðŸŸ¢ Online</span>
             </div>
             <div style={styles.statusItem}>
               <span style={styles.statusLabel}>Certificado mTLS:</span>
-              <span style={styles.statusValue}>🟢 Válido</span>
+              <span style={styles.statusValue}>ðŸŸ¢ VÃ¡lido</span>
             </div>
             <div style={styles.statusItem}>
               <span style={styles.statusLabel}>Workers:</span>
-              <span style={styles.statusValue}>🟢 Ativo</span>
+              <span style={styles.statusValue}>ðŸŸ¢ Ativo</span>
             </div>
             <div style={styles.statusItem}>
               <span style={styles.statusLabel}>Storage:</span>
-              <span style={styles.statusValue}>🟢 Conectado</span>
+              <span style={styles.statusValue}>ðŸŸ¢ Conectado</span>
             </div>
           </div>
         </div>
 
-        {/* Botões de Ação */}
+        {/* BotÃµes de AÃ§Ã£o */}
         <div style={styles.actionsCard}>
           <button 
             style={styles.saveButton}
             onClick={salvarConfiguracoes}
             disabled={saving}
           >
-            {saving ? '💾 Salvando...' : '💾 Salvar Configurações'}
+            {saving ? 'ðŸ’¾ Salvando...' : 'ðŸ’¾ Salvar ConfiguraÃ§Ãµes'}
           </button>
           <button 
             style={styles.testAllButton}
@@ -428,13 +428,13 @@ const ConfiguracoesAdminPage = () => {
               testarConexao('mTLS');
             }}
           >
-            🔄 Testar Todas as Conexões
+            ðŸ”„ Testar Todas as ConexÃµes
           </button>
           <button 
             style={styles.backupButton}
-            onClick={() => alert('Backup das configurações realizado!')}
+            onClick={() => alert('Backup das configuraÃ§Ãµes realizado!')}
           >
-            📦 Fazer Backup
+            ðŸ“¦ Fazer Backup
           </button>
         </div>
       </main>
@@ -462,8 +462,8 @@ const styles = {
   checkbox: { marginRight: '8px' },
   testButton: { padding: '8px 15px', backgroundColor: '#17a2b8', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', marginTop: '5px' },
   testing: { color: '#17a2b8', fontSize: '12px' },
-  success: { color: '#28a745', fontSize: '12px' },
-  error: { color: '#dc3545', fontSize: '12px' },
+  statusSuccess: { color: '#28a745', fontSize: '12px' },
+  statusError: { color: '#dc3545', fontSize: '12px' },
   statusCard: { backgroundColor: '#fff', padding: '25px', borderRadius: '12px', boxShadow: '0 4px 20px rgba(0,0,0,0.05)', marginBottom: '20px' },
   statusGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px' },
   statusItem: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px', backgroundColor: '#f8f9fa', borderRadius: '6px' },

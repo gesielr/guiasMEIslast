@@ -72,7 +72,7 @@ export async function registerNfseController(app: FastifyInstance) {
     const storagePath = await getEmissionPdfStoragePath(id);
 
     if (!storagePath) {
-      return reply.notFound("PDF não disponível para esta emissão");
+      return reply.notFound("PDF nao disponivel para esta emissao");
     }
 
     const pdf = await downloadPdfFromStorage(storagePath);

@@ -68,3 +68,11 @@ export const createDpsSchema = z.object({
 export type CreateDpsDto = z.infer<typeof createDpsSchema>;
 
 export const cancelSchema = z.object({ protocolo: z.string().min(1) });
+
+export const emitNfseSchema = z.object({
+  userId: z.string().uuid(),
+  versao: z.string().min(1),
+  dps_xml_gzip_b64: z.string().min(1)
+});
+
+export type EmitNfseDto = z.infer<typeof emitNfseSchema>;

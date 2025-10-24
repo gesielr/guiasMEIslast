@@ -1,16 +1,63 @@
 import type { FastifyInstance } from "fastify";
 import { NfseService } from "../services/nfse.service";
-import { createDpsSchema, cancelSchema } from "../dto/create-dps.dto";
+import { emitNfseSchema, cancelSchema } from "../dto/create-dps.dto";
 
 export async function registerNfseController(app: FastifyInstance) {
   const service = new NfseService();
 
-  app.post("/services/nfse", async (request) => {
-    const dto = createDpsSchema.parse(request.body);
-    return service.emit(dto);
+  app.post("/nfse", async (request, reply) => {
+    const contentType = request.headers["content-type"] ?? "";
+    if (!contentType.includes("application/json")) {
+      return reply.code(415).send({
+        error: "Unsupported Media Type",
+        message: "Content-Type deve ser application/json"
+      });
+    }
+
+    const parseResult = emitNfseSchema.safeParse(request.body);
+    if (!parseResult.success) {
+      return reply.code(400).send({
+        error: "Payload invalido",
+        details: parseResult.error.flatten()
+      });
+    }
+
+    try {
+      const result = await service.emit(parseResult.data);
+      request.log.info({
+        scope: "nfse:emit",
+        protocolo: result.protocolo,
+        situacao: result.situacao
+      });
+      return reply.code(201).send(result);
+    } catch (error) {
+      request.log.error({ err: error, scope: "nfse:emit" });
+
+      if (error instanceof Error && error.message.includes("Payload DPS invalido")) {
+        return reply.code(400).send({ error: "Bad Request", message: error.message });
+      }
+
+      const statusCode = (error as any)?.statusCode;
+      if (statusCode) {
+        return reply.code(statusCode).send({
+          error: "Upstream Error",
+          message: (error as Error).message,
+          details: (error as any)?.data ?? null
+        });
+      }
+
+      throw error;
+    }
   });
 
-  app.post("/services/nfse/credentials", async (request, reply) => {
+  // rota antiga mantida para compatibilidade - orienta uso do novo endpoint
+  app.post("/services/nfse", async (_request, reply) => {
+    return reply
+      .code(410)
+      .send({ error: "Endpoint substituido", message: "Utilize POST /nfse com payload JSON (dps_xml_gzip_b64)." });
+  });
+
+  const handleCredentialUpload = async (request: any, reply: any) => {
     const body = request.body as unknown;
     const dto = (await import("../dto/credential.dto")).credentialSchema.parse(body);
 
@@ -43,21 +90,24 @@ export async function registerNfseController(app: FastifyInstance) {
       pass: dto.pass
     });
     return created;
-  });
+  };
 
-  app.get("/services/nfse/:id", async (request) => {
+  app.post("/nfse/credentials", handleCredentialUpload);
+  app.post("/services/nfse/credentials", handleCredentialUpload);
+
+  app.get("/nfse/:id", async (request) => {
     const { id } = request.params as { id: string };
     return service.pollStatus(id);
   });
 
-  app.post("/services/nfse/:id/cancel", async (request) => {
+  app.post("/nfse/:id/cancel", async (request) => {
     const { id } = request.params as { id: string };
     const body = request.body as unknown;
     const dto = cancelSchema.parse({ protocolo: id, ...(body ?? {}) });
     return { canceled: true, protocolo: dto.protocolo };
   });
 
-  app.get("/services/nfse/:id/pdf", async (request, reply) => {
+  app.get("/nfse/:id/pdf", async (request, reply) => {
     const { id } = request.params as { id: string };
     const pdf = await service.downloadDanfe(id);
 
@@ -66,7 +116,7 @@ export async function registerNfseController(app: FastifyInstance) {
     return reply.send(pdf);
   });
 
-  app.get("/services/nfse/:id/storage-pdf", async (request, reply) => {
+  app.get("/nfse/:id/storage-pdf", async (request, reply) => {
     const { id } = request.params as { id: string };
     const { getEmissionPdfStoragePath, downloadPdfFromStorage } = await import("../repositories/nfse-emissions.repo");
     const storagePath = await getEmissionPdfStoragePath(id);
@@ -81,3 +131,5 @@ export async function registerNfseController(app: FastifyInstance) {
     return reply.send(pdf);
   });
 }
+
+

@@ -10,6 +10,7 @@ export async function saveEmission(payload: any) {
     protocolo: payload.protocolo,
     status: payload.status,
     xml_hash: payload.xmlHash,
+    nfse_key: payload.nfseKey ?? null,
     tomador: payload.tomador ?? null,
     valores: payload.valores ?? null,
     municipio: payload.municipio ?? null
@@ -20,7 +21,22 @@ export async function saveEmission(payload: any) {
 }
 
 export async function updateEmissionStatus(protocolo: string, status: string, mensagens?: any) {
-  await admin.from("nfse_emissions").update({ status, updated_at: new Date() }).eq("protocolo", protocolo);
+  const updatePayload: Record<string, any> = {
+    status,
+    updated_at: new Date()
+  };
+
+  const chave =
+    mensagens?.chaveAcesso ??
+    mensagens?.nfse?.chaveAcesso ??
+    mensagens?.dps?.chaveAcesso ??
+    mensagens?.dados?.chaveAcesso;
+
+  if (chave) {
+    updatePayload.nfse_key = chave;
+  }
+
+  await admin.from("nfse_emissions").update(updatePayload).eq("protocolo", protocolo);
 }
 
 export function hashXml(xml: string) {

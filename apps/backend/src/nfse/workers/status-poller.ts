@@ -8,8 +8,15 @@ export async function pollPendingEmissions() {
   for (const emission of pendentes) {
     try {
       const status = await service.pollStatus(emission.protocolo);
-      if (status?.situacao === "AUTORIZADA") {
-        const pdf = await service.downloadDanfe(status.chaveNfse || status.chave || emission.protocolo);
+      const situacao = status?.situacao ?? status?.status;
+      if (situacao === "AUTORIZADA") {
+        const chave =
+          status?.chaveAcesso ||
+          status?.nfse?.chaveAcesso ||
+          status?.chaveNfse ||
+          status?.chave ||
+          emission.protocolo;
+        const pdf = await service.downloadDanfe(chave);
         await service.attachPdf(emission.id, pdf);
       }
     } catch (error) {
